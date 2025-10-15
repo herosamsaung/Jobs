@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>بوابة وظائف رؤيا | الأردن</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css?family=Tajawal:400,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Tajawal', Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e4ecf7 100%);
+      margin: 0; padding: 0; color: #222; min-height: 100vh; position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+      background: linear-gradient(135deg, #18152b 0%, #321e53 100%);
+      color: #e7e5f7;
+    }
+    header {
+      background: #6900ad; color: #fff;
+      padding: 20px 0 10px 0; text-align: center; box-shadow: 0 3px 16px #865fc44d;
+      position: sticky; top: 0; z-index: 10;
+      transition: background 0.3s;
+    }
+    body.dark header { background: #1e0832; }
+    .logo { height: 68px; margin-bottom: 6px; }
+    h1 { margin: 0 0 8px 0; font-size: 2.2rem; font-weight: 700; letter-spacing: 1px; }
+    .subtitle { font-size: 1.2rem; color: #e5d7f9; margin-bottom: 5px; }
+    body.dark .subtitle { color: #cdbff1; }
+    .container {
+      max-width: 1100px; margin: 32px auto 18px auto; padding: 16px; background: #fff;
+      border-radius: 18px; box-shadow: 0 2px 22px #a97be73f; position: relative; z-index: 1;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark .container { background: #241740; color: #e7e5f7; }
+    .stats {
+      display: flex; gap: 20px; justify-content: center; margin: 18px 0 30px 0;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: #6900ad; color: #fff; padding: 18px 32px; border-radius: 15px;
+      font-size: 1.1rem; font-weight: 600; box-shadow: 0 1px 4px #0001; text-align: center;
+      min-width: 150px;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark .stat { background: #38185e; }
+    .jobs-list {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 24px;
+    }
+    .job-card {
+      background: #f7f2ff; border: 2px solid #e4d4f7; border-radius: 14px;
+      padding: 24px 20px 16px 20px; box-shadow: 0 1px 8px #a97be712;
+      transition: transform 0.1s, background 0.3s, color 0.3s;
+      position: relative; overflow: hidden; min-height: 220px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    body.dark .job-card { background: #2b1d45; color: #ebebf8; border-color: #51306d; }
+    .job-title { font-size: 1.23rem; font-weight: bold; color: #6900ad; margin-bottom: 8px; }
+    body.dark .job-title { color: #f9d13d; }
+    .job-info { font-size: 1.02rem; margin-bottom: 6px; color: #333; }
+    body.dark .job-info { color: #e7e5f7; }
+    .job-province { font-size: 0.99rem; color: #49007e; margin-bottom: 6px; }
+    body.dark .job-province { color: #f9d13d; }
+    .salary { font-weight: bold; color: #0a6c19; margin-bottom: 6px; }
+    body.dark .salary { color: #89fa8e; }
+    .hours { color: #ad6c00; margin-bottom: 6px; }
+    body.dark .hours { color: #f9d13d; }
+    .apply-btn {
+      background: linear-gradient(90deg, #8400d3 0%, #a97be7 100%);
+      color: #fff; border: none; border-radius: 10px; padding: 9px 17px;
+      font-size: 1.08rem; font-weight: 600; cursor: pointer;
+      box-shadow: 0 1px 8px #6900ad2b; transition: background 0.2s;
+      margin-top: 8px; align-self: flex-end;
+    }
+    .apply-btn:hover {
+      background: linear-gradient(90deg, #6900ad 0%, #a97be7 100%);
+    }
+    .fav-btn {
+      position:absolute;top:10px;left:10px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#fdc800;
+      z-index:1;
+    }
+    .fav-btn.fav { color: #f9d13d; }
+    /* Modal styles */
+    .modal-bg {
+      position: fixed; inset: 0; background: #0008; z-index: 10000;
+      display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s;
+    }
+    .modal {
+      background: #fff; border-radius: 20px; max-width: 99vw; width: 460px;
+      box-shadow: 0 4px 32px #6900ad3a; padding: 42px 26px 36px 26px; text-align: center; position: relative; animation: slideIn 0.25s;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark .modal { background: #251a35; color: #fff; }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes slideIn { from { transform: translateY(60px); opacity: 0 } to { transform: none; opacity: 1 } }
+    .modal h2 { color: #6900ad; margin-bottom: 20px; }
+    body.dark .modal h2 { color: #f9d13d; }
+    .modal input, .modal select, .modal textarea {
+      width: 92%; padding: 8px 10px; border-radius: 8px; border: 1.5px solid #cbb7eb;
+      font-size: 1.08rem; margin-bottom: 16px; direction: rtl; outline: none; transition: border 0.2s;
+      background: #fff; color: #222;
+    }
+    body.dark .modal input, body.dark .modal select, body.dark .modal textarea {
+      background: #2b1d45; color: #fff; border-color: #51306d;
+    }
+    .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: #6900ad; }
+    .modal button {
+      background: linear-gradient(90deg, #6900ad 0%, #a97be7 100%);
+      color: #fff; border: none; border-radius: 10px; padding: 9px 27px;
+      font-size: 1.08rem; font-weight: 600; cursor: pointer; box-shadow: 0 1px 8px #6900ad1b; margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .modal .note { color: #ad6c00; font-size: 0.98rem; margin-top: 8px; margin-bottom: 8px; }
+    .modal .loader {
+      margin: 16px auto; border: 4px solid #eee; border-radius: 50%; border-top: 4px solid #6900ad;
+      width: 48px; height: 48px; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg) } }
+    .modal .success { color: #0a6c19; font-size: 1.09rem; margin-top: 10px; margin-bottom: 10px; font-weight: bold; }
+    body.dark .modal .success { color: #89fa8e; }
+    .modal .pay-btn {
+      background: linear-gradient(90deg, #e56400 0%, #fbae3c 100%);
+      color: #fff; border: none; border-radius: 10px; padding: 10px 34px; font-size: 1.16rem;
+      font-weight: 700; margin-top: 22px; cursor: pointer; box-shadow: 0 1px 8px #c89a2a2b;
+    }
+    .modal .pay-btn:active { background: #e56400 }
+    .modal .rating-stars { font-size:1.6rem;margin:8px 0;direction:ltr;}
+    .modal .rating-stars span { cursor:pointer; }
+    .modal .rates-list { margin:12px 0 0 0;text-align:right;max-height:110px;overflow-y:auto;font-size:1.01rem;}
+    .modal .rates-list div { margin-bottom:4px;color:#6900ad; }
+    body.dark .modal .rates-list div { color:#f9d13d; }
+    .modal .cv-preview { background:#f2f0f8;border-radius:9px;padding:8px 10px;max-height:100px;overflow:auto; }
+
+    /* لوحة تحكم جديدة */
+    #dashboard-panel {
+      position:fixed;top:0;right:0;width:420px;max-width:97vw;height:100vh;z-index:99999;background:#fff;
+      border-radius:0 0 0 22px;box-shadow:-5px 0 30px #6900ad2a;padding:0;display:none;flex-direction:column;
+      transition:background 0.3s,color 0.3s;
+      overflow: hidden;
+    }
+    body.dark #dashboard-panel { background:#211435;color:#fff; }
+    #dashboard-header {
+      background:linear-gradient(90deg,#7500c3 60%,#a97be7 100%);
+      color:#fff;padding:22px 24px 18px 12px;border-radius:0 0 0 22px;display:flex;align-items:center;justify-content:space-between;
+      box-shadow:0 3px 12px #6900ad32;
+      font-size:1.38rem;font-weight:700;letter-spacing:0.5px;
+    }
+    #dashboard-header .profile-pic {
+      width:54px;height:54px;border-radius:50%;background:#fff6;border:2px solid #fff;display:flex;align-items:center;justify-content:center;
+      font-size:2.1rem;color:#6900ad;margin-left:14px;box-shadow:0 1px 10px #6900ad19;
+    }
+    #dashboard-header .close-btn {
+      background:none;color:#fff;font-size:2.1rem;border:none;cursor:pointer;padding:0 7px;
+      margin-right:6px;transition:color 0.2s;
+    }
+    #dashboard-header .close-btn:hover { color:#ffd700; }
+    #dashboard-content {
+      padding:26px 22px 22px 18px;
+      overflow-y:auto; flex:1; font-size:1.14rem;
+      background:rgba(245,243,255,0.7);
+    }
+    body.dark #dashboard-content { background:rgba(34,15,50,0.85);}
+    .dash-section {
+      margin-bottom:28px;background:#fff;box-shadow:0 2px 16px #bba9e731;border-radius:16px;padding:22px 18px 14px 18px;text-align:right;
+      transition:background 0.2s;
+    }
+    body.dark .dash-section { background:#2d2046; }
+    .dash-section h3 {
+      color:#6900ad;margin-bottom:12px;font-size:1.27rem;font-weight:700;letter-spacing:0.3px;
+    }
+    body.dark .dash-section h3 { color:#f9d13d; }
+    .myapp-card, .fav-card {
+      border-bottom:1px solid #ece3fa;padding:12px 0 6px 0;margin-bottom:11px;
+      background:transparent;
+      border-radius:0;
+      box-shadow:none;
+    }
+    .myapp-card:last-child, .fav-card:last-child { border-bottom: none; }
+    .myapp-title { font-size:1.07rem;font-weight:700;color:#6900ad; }
+    .myapp-status { color:#0a6c19;font-weight:700;margin-right:10px;font-size:1.01rem; }
+    .myapp-date { color:#888;font-size:.99rem;margin-top:2px;margin-bottom:4px; }
+    .fav-card .job-title { color:#f9d13d;font-size:1.09rem; }
+    .fav-actions button {
+      background:#e4d4f7;color:#6900ad;border:none;border-radius:7px;padding:6px 14px;margin-left:7px;font-size:.99rem;cursor:pointer;
+      transition:background 0.2s;
+    }
+    .fav-actions button:hover { background:#6900ad;color:#fff; }
+    .cv-box {
+      background:#f7f2ff;border-radius:10px;padding:13px 12px 8px 12px;margin-bottom:6px;
+      min-height:60px;
+    }
+    body.dark .cv-box { background:#2b1d45; }
+    .profile-info div {margin-bottom:7px;}
+    .logout-btn {
+      margin-top:16px;background:#f9d13d;color:#6900ad;border:none;border-radius:9px;padding:8px 22px;font-size:1.08rem;cursor:pointer;font-weight:600;
+      transition:background 0.2s;
+    }
+    .logout-btn:hover { background:#ffd700;color:#6900ad; }
+    .feedback-stars { font-size: 1.44rem; margin: 7px 0 10px 0; direction: ltr;}
+    .feedback-stars span { cursor: pointer; color: #f9d13d; }
+    .stats-box {font-size:1.09rem;color:#6900ad;margin-bottom:8px;}
+    body.dark .stats-box {color:#f9d13d;}
+    /* Responsive */
+    @media (max-width: 700px) {
+      .container { padding: 6px; }
+      .stats { flex-direction: column; gap: 12px; }
+      .modal { width: 97vw; padding: 28px 3vw 20px 3vw; }
+      .job-card { padding: 14px 4px 10px 4px; }
+      #dashboard-panel { width:99vw; }
+      #dashboard-content {padding:13px 4vw 18px 4vw;}
+      #dashboard-header { font-size: 1.02rem;}
+    }
+  </style>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getDatabase, ref, push, set, get, remove, update, onValue, child } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+    window.firebaseInit = () => {
+      const firebaseConfig = {
+        apiKey: "AIzaSyBr03bRk3uNzLCFzr53ufdPbA3DrOZHxWQ",
+        authDomain: "jobsroya.firebaseapp.com",
+        projectId: "jobsroya",
+        storageBucket: "jobsroya.firebasestorage.app",
+        messagingSenderId: "882520191513",
+        appId: "1:882520191513:web:2165131b20e33bdc38b088",
+        measurementId: "G-RW67K10VPD",
+        databaseURL: "https://jobsroya-default-rtdb.firebaseio.com"
+      };
+      const app = initializeApp(firebaseConfig);
+      window.db = getDatabase(app);
+      window.refDB = ref;
+      window.pushDB = push;
+      window.setDB = set;
+      window.getDB = get;
+      window.removeDB = remove;
+      window.updateDB = update;
+      window.onValueDB = onValue;
+      window.childDB = child;
+    };
+  </script>
+</head>
+<body>
+  <!-- الوضع الليلي -->
+  <div id="dark-toggle" title="الوضع الليلي/النهاري">🌙</div>
+
+  <!-- زر واتساب -->
+  <a href="https://wa.me/962799999999" class="wa-btn" target="_blank" title="تواصل مع الدعم">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
+  </a>
+
+  <!-- شريط الوظائف الجديدة المتحرك أعلى الصفحة -->
+  <div id="jobs-ticker">
+    <marquee id="ticker-content" direction="right" scrollamount="5">🔥 وظائف اليوم: سيتم تحديثها تلقائياً ... تابع كل جديد!</marquee>
+  </div>
+
+  <header>
+    <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/ROYA_TV_LOGO.svg/512px-ROYA_TV_LOGO.svg.png" alt="شعار رؤيا"/>
+    <h1>بوابة وظائف رؤيا</h1>
+    <div class="subtitle">كل فرص العمل المتوفرة في الأردن بين يديك — لوحة تحكم متكاملة</div>
+    <button style="position:absolute;top:23px;right:26px;background:#fff;color:#6900ad;font-size:1.07rem;border-radius:8px;padding:5px 16px;border:none;cursor:pointer;font-weight:700;box-shadow:0 1px 8px #6900ad12;z-index:100;" onclick="openDashboardPanel()">
+      لوحة التحكم
+    </button>
+  </header>
+
+  <div class="container">
+    <div class="stats">
+      <div class="stat" id="stat-jobs">عدد الوظائف المتاحة: <span>--</span></div>
+      <div class="stat" id="stat-apps">طلبات اليوم: <span>--</span></div>
+      <div class="stat" id="stat-users">المستخدمون المسجلون: <span>--</span></div>
+      <div class="stat" id="stat-provinces">المحافظات: <span>12</span></div>
+    </div>
+    <div style="margin-bottom:14px; text-align:center;">
+      <input id="search" type="text" placeholder="ابحث عن وظيفة أو كلمة مفتاحية..." style="padding:8px 12px; border-radius:8px; border:1.5px solid #cbb7eb; width:260px; font-size:1.03rem; margin-bottom:12px;direction:rtl;" />
+      <select id="filter-province" style="padding:6px 10px;border-radius:8px;border:1.5px solid #cbb7eb;font-size:1.01rem;margin-right:8px;">
+        <option value="">كل المحافظات</option>
+        <option>عمان</option><option>إربد</option><option>الزرقاء</option><option>العقبة</option>
+        <option>المفرق</option><option>السلط</option><option>جرش</option>
+        <option>عجلون</option><option>مأدبا</option><option>الكرك</option>
+        <option>الطفيلة</option><option>معان</option>
+      </select>
+      <select id="filter-type" style="padding:6px 10px;border-radius:8px;border:1.5px solid #cbb7eb;font-size:1.01rem;margin-right:8px;">
+        <option value="">كل الأنواع</option>
+        <option>دوام كامل</option>
+        <option>دوام جزئي</option>
+        <option>عقد مؤقت</option>
+        <option>عمل عن بعد</option>
+        <option>تدريب</option>
+      </select>
+      <select id="filter-salary" style="padding:6px 10px;border-radius:8px;border:1.5px solid #cbb7eb;font-size:1.01rem;margin-right:8px;">
+        <option value="">كل الرواتب</option>
+        <option value="550">550+</option>
+        <option value="700">700+</option>
+        <option value="900">900+</option>
+        <option value="1100">1100+</option>
+      </select>
+    </div>
+    <div class="jobs-list" id="jobs-list">
+      <!-- الوظائف ستظهر هنا -->
+    </div>
+    <div style="margin-top:28px;text-align:right;">
+      <button onclick="exportJobsPDF()" style="background:#6900ad;color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:1.05rem;cursor:pointer;">تحميل جميع الوظائف PDF</button>
+      <button onclick="window.print()" style="background:#f9d13d;color:#6900ad;border:none;border-radius:8px;padding:8px 20px;font-size:1.05rem;cursor:pointer;margin-right:10px;">طباعة الصفحة</button>
+    </div>
+  </div>
+
+  <footer>
+    جميع الحقوق محفوظة &copy; قناة رؤيا 2025 — تصميم وتطوير: فريق رؤيا الرقمي
+  </footer>
+
+  <!-- إشعارات توست -->
+  <div id="toast"></div>
+
+  <!-- لوحة تحكم المستخدم الجديدة -->
+  <div id="dashboard-panel">
+    <div id="dashboard-header">
+      <span style="display:flex;align-items:center;">
+        <span class="profile-pic" id="profile-pic">👤</span>
+        <span id="dashboard-title">لوحة تحكم المستخدم</span>
+      </span>
+      <button class="close-btn" onclick="closeDashboardPanel()">✖</button>
+    </div>
+    <div id="dashboard-content"></div>
+  </div>
+
+  <!-- نافذة التسجيل/التسجيل دخول -->
+  <div class="modal-bg" id="user-modal-bg" style="display:flex">
+    <div class="modal" id="user-modal">
+      <h2>تسجيل الدخول</h2>
+      <div class="note">يرجى تعبئة البيانات لمتابعة تصفح الوظائف</div>
+      <input type="text" id="name-input" placeholder="الاسم الكامل" />
+      <input type="tel" id="phone-input" placeholder="رقم الهاتف" pattern="^07[789]\d{7}$" maxlength="10"/>
+      <select id="province-input">
+        <option value="">اختر المحافظة</option>
+        <option>عمان</option><option>إربد</option><option>الزرقاء</option><option>العقبة</option>
+        <option>المفرق</option><option>السلط</option><option>جرش</option>
+        <option>عجلون</option><option>مأدبا</option><option>الكرك</option>
+        <option>الطفيلة</option><option>معان</option>
+      </select>
+      <input type="email" id="email-input" placeholder="البريد الإلكتروني (اختياري)" />
+      <button id="modal-next-btn">دخول</button>
+      <div id="modal-error" style="color:#b30000; font-size:.99rem;margin-top:8px;min-height:24px;"></div>
+    </div>
+  </div>
+
+  <!-- نافذة عامة للخطوات والتقييمات والاختبارات -->
+  <div class="modal-bg" id="step-modal-bg" style="display:none">
+    <div class="modal" id="step-modal"></div>
+  </div>
+
+  <script type="module">
+    window.firebaseInit();
+
+    // بيانات المستخدم
+    let userData = null;
+    let selectedJobIdx = null;
+    let currentDashboardTab = "myapps";
+    let favJobs = JSON.parse(localStorage.getItem("favJobs")||"[]");
+    let lastFilters = JSON.parse(localStorage.getItem("lastFilters")||"{}");
+
+    // Demo jobs data: 70 وظيفة متنوعة بين 7-10 ساعات وراتب 550-1100 دينار
+    const demoJobs = [
+      { title: "مندوب مبيعات", salary: 650, hours: 8, desc: "ترويج منتجات الشركة وزيارة العملاء.", img: "🛒", province:"عمان", type:"دوام كامل", company:"شركة النجاح", exp:"بدون خبرة" },
+      { title: "محاسب مالي", salary: 950, hours: 9, desc: "إدارة الحسابات وإصدار التقارير المالية.", img: "📊", province:"إربد", type:"دوام كامل", company:"دار الحساب", exp:"1-3 سنوات" },
+      { title: "خدمة عملاء", salary: 600, hours: 7, desc: "استقبال مكالمات العملاء وحل مشكلاتهم.", img: "☎️", province:"الزرقاء", type:"دوام جزئي", company:"اتصال الأردن", exp:"حديث التخرج" },
+      { title: "سائق توصيل", salary: 700, hours: 9, desc: "توصيل الطلبات للمنازل.", img: "🚗", province:"عمان", type:"دوام كامل", company:"طلبات الأردن", exp:"بدون خبرة" },
+      { title: "مطور ويب", salary: 1100, hours: 8, desc: "تطوير مواقع إلكترونية.", img: "💻", province:"عمان", type:"عمل عن بعد", company:"رواد التقنية", exp:"3+ سنوات" },
+      { title: "مصمم جرافيك", salary: 800, hours: 7, desc: "تصميم إعلانات ومواد تسويقية.", img: "🎨", province:"العقبة", type:"دوام جزئي", company:"مؤسسة الدعاية", exp:"1-3 سنوات" },
+      { title: "مشرف مستودع", salary: 850, hours: 9, desc: "تنظيم وإدارة المستودع.", img: "🏭", province:"إربد", type:"دوام كامل", company:"مستودعات الشرق", exp:"3+ سنوات" },
+      { title: "مهندس مدني", salary: 1000, hours: 10, desc: "إشراف مشاريع بناء.", img: "🏗️", province:"عمان", type:"عقد مؤقت", company:"شركة الإنشاءات", exp:"3+ سنوات" },
+      { title: "مساعد إداري", salary: 550, hours: 7, desc: "مساعدة الفريق الإداري.", img: "🗂️", province:"مأدبا", type:"دوام كامل", company:"مؤسسة الأعمال", exp:"بدون خبرة" },
+      { title: "ممرض/ة", salary: 1100, hours: 9, desc: "رعاية صحية للمرضى.", img: "🩺", province:"السلط", type:"دوام كامل", company:"مستشفى الشفاء", exp:"1-3 سنوات" },
+      { title: "مدرس لغة إنجليزية", salary: 750, hours: 7, desc: "تدريس اللغة الإنجليزية.", img: "📚", province:"الكرك", type:"دوام كامل", company:"مدرسة الريادة", exp:"حديث التخرج" },
+      { title: "حارس أمن", salary: 600, hours: 8, desc: "حماية منشآت الشركة.", img: "🛡️", province:"جرش", type:"دوام كامل", company:"ش. الأمن", exp:"بدون خبرة" },
+      { title: "محلل بيانات", salary: 1050, hours: 8, desc: "تحليل بيانات السوق.", img: "📈", province:"عمان", type:"دوام كامل", company:"تحليلات الأردن", exp:"3+ سنوات" },
+      { title: "موارد بشرية", salary: 950, hours: 8, desc: "إدارة عمليات التوظيف.", img: "🤝", province:"إربد", type:"دوام كامل", company:"شركة الريادة", exp:"1-3 سنوات" },
+      { title: "محرر محتوى", salary: 900, hours: 8, desc: "كتابة وتحرير محتوى.", img: "✍️", province:"الزرقاء", type:"عمل عن بعد", company:"المحتوى العربي", exp:"1-3 سنوات" },
+      { title: "مندوب دعاية طبية", salary: 1100, hours: 9, desc: "تسويق المنتجات الطبية.", img: "💊", province:"عمان", type:"دوام كامل", company:"فارما", exp:"3+ سنوات" },
+      { title: "مبيعات عبر الهاتف", salary: 600, hours: 8, desc: "تسويق هاتفي.", img: "📞", province:"العقبة", type:"دوام جزئي", company:"اتصالات الأردن", exp:"حديث التخرج" },
+      { title: "خدمة عملاء إلكترونية", salary: 700, hours: 8, desc: "دعم العملاء أونلاين.", img: "💬", province:"إربد", type:"عمل عن بعد", company:"خدمة نت", exp:"بدون خبرة" },
+      { title: "مصور فيديو", salary: 1000, hours: 8, desc: "تصوير فيديوهات.", img: "📹", province:"عمان", type:"دوام كامل", company:"إعلام رؤيا", exp:"1-3 سنوات" },
+      { title: "سكرتير تنفيذي", salary: 800, hours: 8, desc: "تنظيم المواعيد وإدارة المكتب.", img: "🗃️", province:"عجلون", type:"دوام كامل", company:"مكتب الريادة", exp:"1-3 سنوات" },
+      { title: "فنّي كهرباء", salary: 850, hours: 9, desc: "صيانة كهربائية.", img: "💡", province:"الزرقاء", type:"دوام كامل", company:"كهرباء الشرق", exp:"1-3 سنوات" },
+      { title: "بائع معرض", salary: 650, hours: 7, desc: "بيع مباشر في المعرض.", img: "🛍️", province:"عمان", type:"دوام جزئي", company:"معارض النجاح", exp:"بدون خبرة" },
+      { title: "مدخل بيانات", salary: 700, hours: 8, desc: "إدخال ومعالجة البيانات.", img: "⌨️", province:"العقبة", type:"دوام كامل", company:"بيانات العقبة", exp:"حديث التخرج" },
+      { title: "مندوب تحصيل", salary: 750, hours: 9, desc: "جمع المستحقات المالية.", img: "💵", province:"مأدبا", type:"دوام كامل", company:"تحصيلات الأردن", exp:"1-3 سنوات" },
+      { title: "مشرف مبيعات", salary: 1050, hours: 10, desc: "إدارة فريق المبيعات.", img: "👔", province:"عمان", type:"دوام كامل", company:"شركة الرائد", exp:"3+ سنوات" },
+      { title: "رسام هندسي", salary: 900, hours: 8, desc: "رسم مخططات هندسية.", img: "📐", province:"الكرك", type:"دوام كامل", company:"مكتب التصميم", exp:"1-3 سنوات" },
+      { title: "أخصائي موارد بشرية", salary: 950, hours: 8, desc: "توظيف وتطوير الموظفين.", img: "🧑‍💼", province:"السلط", type:"دوام كامل", company:"موارد الأردن", exp:"1-3 سنوات" },
+      { title: "مساعد طبيب أسنان", salary: 600, hours: 8, desc: "مساعدة الطبيب أثناء العلاج.", img: "🦷", province:"معان", type:"دوام كامل", company:"عيادة الابتسامة", exp:"حديث التخرج" },
+      { title: "موظف استقبال", salary: 650, hours: 7, desc: "استقبال الزوار والرد على الهاتف.", img: "🛎️", province:"العقبة", type:"دوام جزئي", company:"فندق البحر", exp:"بدون خبرة" },
+      { title: "مدرب رياضي", salary: 800, hours: 8, desc: "تدريب الأعضاء في النادي.", img: "🏋️‍♂️", province:"إربد", type:"دوام كامل", company:"نادي القوة", exp:"1-3 سنوات" },
+      { title: "سائق شاحنة", salary: 1000, hours: 10, desc: "نقل البضائع بين المحافظات.", img: "🚚", province:"المفرق", type:"دوام كامل", company:"نقل الشام", exp:"3+ سنوات" },
+      { title: "أخصائي تسويق رقمي", salary: 1100, hours: 8, desc: "إدارة الحملات الرقمية.", img: "💻", province:"عمان", type:"عمل عن بعد", company:"ديجيتال جو", exp:"3+ سنوات" },
+      { title: "محاسب زبائن", salary: 650, hours: 7, desc: "تسجيل الفواتير وتحصيل المدفوعات.", img: "🧾", province:"الزرقاء", type:"دوام جزئي", company:"متجر الشرق", exp:"بدون خبرة" },
+      { title: "مساعد تدريس", salary: 700, hours: 8, desc: "مساعدة المعلم في الصف.", img: "📖", province:"جرش", type:"دوام كامل", company:"مدرسة الغد", exp:"حديث التخرج" },
+      { title: "بائع ملابس", salary: 600, hours: 7, desc: "بيع الملابس في المحل.", img: "👗", province:"عجلون", type:"دوام جزئي", company:"محلات الأناقة", exp:"بدون خبرة" },
+      { title: "مندوب تسويق ميداني", salary: 800, hours: 8, desc: "تسويق ميداني لمنتجات الشركة.", img: "📢", province:"عمان", type:"دوام كامل", company:"شركة السوق", exp:"1-3 سنوات" },
+      { title: "أمين مخزن", salary: 900, hours: 9, desc: "إدارة المخزون والتوريد.", img: "🏪", province:"الطفيلة", type:"دوام كامل", company:"مخازن الجنوب", exp:"1-3 سنوات" },
+      { title: "فني صيانة", salary: 850, hours: 8, desc: "صيانة أجهزة كهربائية.", img: "🔧", province:"العقبة", type:"دوام كامل", company:"صيانة الجنوب", exp:"1-3 سنوات" },
+      { title: "محاسب تكاليف", salary: 1000, hours: 8, desc: "إدارة التكاليف وتحليل الأرباح.", img: "💸", province:"الكرك", type:"دوام كامل", company:"محاسبة الجنوب", exp:"3+ سنوات" },
+      { title: "مندوب حجوزات", salary: 750, hours: 7, desc: "إتمام الحجوزات للعملاء.", img: "📆", province:"معان", type:"دوام جزئي", company:"شركة السياحة", exp:"بدون خبرة" },
+      { title: "مساعد إداري", salary: 650, hours: 8, desc: "مساعدة الإدارة في الأعمال اليومية.", img: "🗄️", province:"إربد", type:"دوام كامل", company:"مؤسسة النجاح", exp:"حديث التخرج" },
+      { title: "أخصائي شبكات", salary: 1050, hours: 9, desc: "إدارة الشبكات الداخلية.", img: "🌐", province:"عمان", type:"دوام كامل", company:"تقنية الأردن", exp:"3+ سنوات" },
+      { title: "سائق باص", salary: 850, hours: 8, desc: "نقل الموظفين.", img: "🚌", province:"الزرقاء", type:"دوام كامل", company:"شركة النقل", exp:"1-3 سنوات" },
+      { title: "مندوب مشتريات", salary: 900, hours: 9, desc: "شراء المواد والمستلزمات.", img: "🛒", province:"عمان", type:"دوام كامل", company:"شركة المواد", exp:"1-3 سنوات" },
+      { title: "أمين مكتبة", salary: 700, hours: 8, desc: "إدارة الكتب والمراجع.", img: "📚", province:"مأدبا", type:"دوام كامل", company:"مكتبة مأدبا", exp:"حديث التخرج" },
+      { title: "موظف استقبال فندقي", salary: 800, hours: 9, desc: "استقبال نزلاء الفندق.", img: "🏨", province:"العقبة", type:"دوام كامل", company:"فندق الشرق", exp:"1-3 سنوات" },
+      { title: "فني مختبر", salary: 900, hours: 8, desc: "إجراء التحاليل المخبرية.", img: "🧪", province:"عمان", type:"دوام كامل", company:"مختبر الأردن", exp:"1-3 سنوات" },
+      { title: "أخصائي مبيعات", salary: 1050, hours: 10, desc: "زيادة مبيعات الشركة.", img: "💼", province:"إربد", type:"دوام كامل", company:"شركة المبيعات", exp:"3+ سنوات" },
+      { title: "فني ميكانيك", salary: 850, hours: 8, desc: "صيانة ميكانيكية.", img: "🔩", province:"العقبة", type:"دوام كامل", company:"ميكانيك الجنوب", exp:"1-3 سنوات" },
+      { title: "عامل مستودع", salary: 600, hours: 7, desc: "ترتيب وتخزين البضائع.", img: "📦", province:"الزرقاء", type:"دوام جزئي", company:"المستودع الحديث", exp:"بدون خبرة" },
+      { title: "مندوب علاقات عامة", salary: 900, hours: 8, desc: "تمثيل الشركة في المناسبات.", img: "🎤", province:"عمان", type:"دوام كامل", company:"علاقات الأردن", exp:"1-3 سنوات" },
+      { title: "مساعد محاسب", salary: 650, hours: 7, desc: "مساعدة في الأعمال المحاسبية.", img: "🧮", province:"الكرك", type:"دوام جزئي", company:"محاسبة الكرك", exp:"بدون خبرة" },
+      { title: "مساعد موارد بشرية", salary: 700, hours: 8, desc: "مساعدة في إجراءات الموارد البشرية.", img: "👥", province:"السلط", type:"دوام كامل", company:"موارد السلط", exp:"حديث التخرج" },
+      { title: "مندوب توصيل", salary: 700, hours: 9, desc: "توصيل الطلبات للعملاء.", img: "🛵", province:"عمان", type:"دوام كامل", company:"شركة التوصيل", exp:"بدون خبرة" },
+      { title: "أخصائي تسويق", salary: 950, hours: 8, desc: "إعداد الحملات التسويقية.", img: "📣", province:"مأدبا", type:"دوام كامل", company:"تسويق الأردن", exp:"1-3 سنوات" },
+      { title: "مدخل بيانات", salary: 600, hours: 7, desc: "إدخال بيانات العملاء.", img: "🗃️", province:"جرش", type:"دوام جزئي", company:"شركة البيانات", exp:"بدون خبرة" },
+      { title: "سكرتيرة تنفيذية", salary: 800, hours: 8, desc: "تنظيم أعمال الإدارة.", img: "🗂️", province:"عجلون", type:"دوام كامل", company:"مكتب العجلون", exp:"1-3 سنوات" },
+      { title: "محاسب رواتب", salary: 950, hours: 8, desc: "إعداد الرواتب الشهرية.", img: "💳", province:"عمان", type:"دوام كامل", company:"شركة الرواتب", exp:"1-3 سنوات" },
+      { title: "مندوب مشتريات", salary: 900, hours: 9, desc: "شراء المواد للشركة.", img: "🛍️", province:"المفرق", type:"دوام كامل", company:"مشتريات الشمال", exp:"1-3 سنوات" },
+      { title: "سائق تكسي", salary: 700, hours: 9, desc: "نقل الركاب داخل المدينة.", img: "🚕", province:"عمان", type:"دوام كامل", company:"تاكسي رؤيا", exp:"بدون خبرة" },
+      { title: "فني تكييف وتبريد", salary: 850, hours: 8, desc: "صيانة أجهزة التكييف.", img: "❄️", province:"الكرك", type:"دوام كامل", company:"تكييف الجنوب", exp:"1-3 سنوات" },
+      { title: "أخصائي موارد بشرية", salary: 1000, hours: 9, desc: "إدارة شؤون الموظفين.", img: "👤", province:"عمان", type:"دوام كامل", company:"موارد عمان", exp:"3+ سنوات" },
+      { title: "مساعد تسويق", salary: 650, hours: 7, desc: "مساعدة فريق التسويق.", img: "📤", province:"العقبة", type:"دوام جزئي", company:"تسويق الجنوب", exp:"بدون خبرة" },
+      { title: "أخصائي اتصال", salary: 900, hours: 8, desc: "التواصل مع العملاء.", img: "📞", province:"جرش", type:"دوام كامل", company:"اتصال جرش", exp:"1-3 سنوات" },
+      { title: "مساعد مدير", salary: 1050, hours: 10, desc: "مساعدة المدير التنفيذي.", img: "👔", province:"إربد", type:"دوام كامل", company:"إدارة إربد", exp:"3+ سنوات" },
+      { title: "بائع إلكترونيات", salary: 750, hours: 7, desc: "بيع الأجهزة الإلكترونية.", img: "📱", province:"عمان", type:"دوام جزئي", company:"إلكترونيات عمان", exp:"بدون خبرة" },
+      { title: "فني صيانة موبايل", salary: 800, hours: 8, desc: "إصلاح أجهزة الموبايل.", img: "🔧", province:"الزرقاء", type:"دوام كامل", company:"صيانة زرقاء", exp:"1-3 سنوات" },
+      { title: "سائق شحن", salary: 900, hours: 9, desc: "توصيل الشحنات.", img: "🚚", province:"العقبة", type:"دوام كامل", company:"شحن الجنوب", exp:"1-3 سنوات" },
+      { title: "موظف كول سنتر", salary: 650, hours: 7, desc: "الاتصال بالعملاء.", img: "☎️", province:"عمان", type:"دوام جزئي", company:"كول سنتر عمان", exp:"بدون خبرة" },
+      { title: "عامل مستودع", salary: 600, hours: 7, desc: "ترتيب البضائع.", img: "📦", province:"المفرق", type:"دوام جزئي", company:"مستودع المفرق", exp:"بدون خبرة" }
+    ];
+
+    // تحميل الوظائف
+    let jobsData = demoJobs;
+    let jobsKeys = Array.from({length:demoJobs.length},(_,i)=>"demo"+i);
+    let jobsLoadedFromFirebase = false;
+
+    // بيانات عامة
+    let allApplications = [];
+    let allUsers = [];
+    let allRatings = [];
+    let allCVs = [];
+
+    // وظائف لوحة التحكم
+    function fetchAllData() {
+      // لا داعي للوحة المشرف، فقط الطلبات والتقييمات والسير الذاتية
+      window.onValueDB(window.refDB(window.db,"applications"), snap=>{
+        allApplications = snap.val()? Object.entries(snap.val()).map(([k,v])=>({...v,key:k})) : [];
+        updateStats();
+      });
+      window.onValueDB(window.refDB(window.db,"users"), snap=>{
+        allUsers = snap.val()? Object.values(snap.val()): [];
+        updateStats();
+      });
+      window.onValueDB(window.refDB(window.db,"ratings"), snap=>{
+        allRatings = snap.val()? Object.entries(snap.val()).map(([k,v])=>({...v,key:k})) : [];
+      });
+      window.onValueDB(window.refDB(window.db,"cvs"), snap=>{
+        allCVs = snap.val()? Object.entries(snap.val()).map(([k,v])=>({...v,key:k})) : [];
+      });
+    }
+    fetchAllData();
+
+    // تحديث الإحصاءات
+    function updateStats() {
+      document.querySelector("#stat-jobs span").textContent = jobsData.length;
+      document.querySelector("#stat-users span").textContent = allUsers.length;
+      document.querySelector("#stat-apps span").textContent = allApplications.filter(a=>a.timestamp && new Date(a.timestamp).toDateString()===new Date().toDateString()).length;
+    }
+    function updateJobsTicker() {
+      const ticker = document.getElementById("ticker-content");
+      const jobs = jobsData.slice(-6).map(j=>`<b>${j.title}</b> - ${j.province}`).join(" | ");
+      ticker.innerHTML = "🔥 وظائف جديدة: "+jobs;
+    }
+
+    // رسم الوظائف مع المحافظة حسب اختيار المستخدم فقط
+    function renderJobs(filter="") {
+      let jobs = jobsData;
+      // فلاتر
+      const province = document.getElementById("filter-province").value;
+      const type = document.getElementById("filter-type").value;
+      const salary = document.getElementById("filter-salary").value;
+      // تطبيق الفلاتر
+      if(filter && filter.trim()!=="") {
+        jobs = jobs.filter(j => (j.title+j.desc+j.company+j.province+j.type).includes(filter));
+      }
+      if(province) jobs = jobs.filter(j=>j.province===province);
+      if(type) jobs = jobs.filter(j=>j.type===type);
+      if(salary) jobs = jobs.filter(j=>j.salary>=parseInt(salary));
+      // حفظ آخر الفلاتر
+      localStorage.setItem("lastFilters",JSON.stringify({filter,province,type,salary}));
+      const list = document.getElementById("jobs-list");
+      list.innerHTML = "";
+      jobs.forEach((job, idx) => {
+        // إظهار المحافظة فقط حسب اختيار المستخدم
+        let showProvince = province ? `<div class="job-province">المحافظة: <span>${job.province||"--"}</span></div>` : "";
+        const globalIdx = jobsKeys.indexOf(jobsKeys[idx]);
+        const isFav = favJobs.includes(globalIdx);
+        list.innerHTML += `
+        <div class="job-card">
+          <button class="fav-btn${isFav?' fav':''}" title="إضافة للمفضلة" onclick="toggleFav(${globalIdx})"><span id="fav-${globalIdx}">${isFav?"★":"☆"}</span></button>
+          <div style="font-size:2.2rem">${job.img||"💼"}</div>
+          <div class="job-title">${job.title}</div>
+          <div class="job-info">${job.desc}</div>
+          <div>الشركة: <b>${job.company||"--"}</b></div>
+          <div>النوع: <b>${job.type||"--"}</b> | الخبرة: <b>${job.exp||"--"}</b></div>
+          <div class="salary">الراتب: ${job.salary} دينار</div>
+          <div class="hours">ساعات العمل: ${job.hours} ساعة</div>
+          ${showProvince}
+          <button class="apply-btn" data-idx="${globalIdx}" onclick="applyJob(${globalIdx})">تقديم</button>
+        </div>`;
+      });
+      updateFavBtns();
+    }
+    // البحث والفلاتر
+    document.getElementById("search").oninput = function() {
+      renderJobs(this.value);
+    }
+    document.getElementById("filter-province").onchange = function(){ renderJobs(document.getElementById("search").value);}
+    document.getElementById("filter-type").onchange = function(){ renderJobs(document.getElementById("search").value);}
+    document.getElementById("filter-salary").onchange = function(){ renderJobs(document.getElementById("search").value);}
+    // المفضلة
+    function toggleFav(idx) {
+      let i = favJobs.indexOf(idx);
+      if(i>-1) favJobs.splice(i,1); else favJobs.push(idx);
+      localStorage.setItem("favJobs", JSON.stringify(favJobs));
+      updateFavBtns();
+      showToast(i>-1?"تم حذف الوظيفة من المفضلة":"تم إضافة الوظيفة للمفضلة");
+    }
+    function updateFavBtns() {
+      document.querySelectorAll(".fav-btn").forEach(btn=>{
+        let idx = +btn.getAttribute("onclick").match(/\d+/)[0];
+        let span = document.getElementById("fav-"+idx);
+        if(span) span.textContent = favJobs.includes(idx) ? "★" : "☆";
+        if(favJobs.includes(idx)) btn.classList.add("fav"); else btn.classList.remove("fav");
+      });
+    }
+    // تقديم وظيفة
+    window.applyJob = function(idx) {
+      selectedJobIdx = idx;
+      showStepModal("assessment");
+    }
+    // نافذة التقديم فقط
+    function showStepModal(step,arg) {
+      const modalBg = document.getElementById("step-modal-bg");
+      const modal = document.getElementById("step-modal");
+      if(step==="assessment") {
+        modal.innerHTML = `
+          <h2>تأكيد التقديم على الوظيفة</h2>
+          <div style="margin-bottom:10px;font-size:1.09rem;">${jobsData[selectedJobIdx].img||"💼"} <b>${jobsData[selectedJobIdx].title}</b></div>
+          <div>الراتب: <b>${jobsData[selectedJobIdx].salary} دينار</b></div>
+          <div>النوع: <b>${jobsData[selectedJobIdx].type||"--"}</b> | الخبرة: <b>${jobsData[selectedJobIdx].exp||"--"}</b></div>
+          <button style="margin-top:18px;" id="confirm-apply-btn">تقديم الطلب</button>
+          <button style="margin-top:10px;background:#eee;color:#333;border:1px solid #ddd;" onclick="closeStepModal()">إلغاء</button>
+        `;
+        modalBg.style.display = "flex";
+        document.getElementById("confirm-apply-btn").onclick = () => {
+          showToast("تم استلام طلبك!");
+          closeStepModal();
+        }
+      }
+    }
+    function closeStepModal() {
+      document.getElementById("step-modal-bg").style.display="none";
+    }
+    // اشعارات توست
+    window.showToast = function(msg, duration=2700) {
+      let toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(()=>{toast.style.display="none";}, duration);
+    }
+    // الوضع الليلي
+    let dark = localStorage.getItem("darkMode")==="1";
+    function setDarkMode(on) {
+      dark = on;
+      if(on) document.body.classList.add("dark"); else document.body.classList.remove("dark");
+      localStorage.setItem("darkMode",on?"1":"0");
+    }
+    setDarkMode(dark);
+    document.getElementById("dark-toggle").onclick = function(){ setDarkMode(!dark);}
+    // آخر الفلاتر/load
+    window.onload = function() {
+      // تسجيل دخول تلقائي
+      if(localStorage.getItem("ruyaJobsUser")) {
+        userData = JSON.parse(localStorage.getItem("ruyaJobsUser"));
+        document.getElementById("user-modal-bg").style.display = "none";
+      }
+      // استعادة آخر فلاتر
+      if(lastFilters) {
+        document.getElementById("search").value = lastFilters.filter||"";
+        document.getElementById("filter-province").value = lastFilters.province||"";
+        document.getElementById("filter-type").value = lastFilters.type||"";
+        document.getElementById("filter-salary").value = lastFilters.salary||"";
+      }
+      renderJobs();
+      updateFavBtns();
+      updateStats();
+      updateJobsTicker();
+    };
+    // حفظ المستخدم في التخزين المحلي بعد التسجيل
+    document.getElementById("modal-next-btn").addEventListener("click", function() {
+      const name = document.getElementById("name-input").value.trim();
+      const phone = document.getElementById("phone-input").value.trim();
+      const province = document.getElementById("province-input").value;
+      const email = document.getElementById("email-input").value.trim();
+      let error = "";
+      if(!name) error = "يرجى إدخال الاسم";
+      else if(!/^07[789]\d{7}$/.test(phone)) error = "يرجى إدخال رقم هاتف أردني صحيح";
+      else if(!province) error = "يرجى اختيار المحافظة";
+      if(error) { document.getElementById("modal-error").textContent = error; return; }
+      userData = { name, phone, province, email, uid: phone };
+      localStorage.setItem("ruyaJobsUser", JSON.stringify(userData));
+      document.getElementById("user-modal-bg").style.display = "none";
+      showToast("تم تسجيل الدخول بنجاح!");
+      updateStats();
+      renderJobs();
+      openDashboardPanel();
+    });
+
+    // تحميل جميع الوظائف PDF
+    window.exportJobsPDF = function() {
+      let win = window.open("","_blank");
+      let html = `<h2>جميع الوظائف المتاحة</h2><table border="1" style="width:100%;border-collapse:collapse;"><tr><th>الوظيفة</th><th>الشركة</th><th>المحافظة</th><th>الراتب</th><th>النوع</th></tr>`;
+      jobsData.forEach(j=>{
+        html += `<tr><td>${j.title}</td><td>${j.company}</td><td>${j.province}</td><td>${j.salary}</td><td>${j.type}</td></tr>`;
+      });
+      html += "</table>";
+      win.document.write(html);
+      win.print();
+    }
+
+    // لوحة تحكم المستخدم الجديدة
+    window.openDashboardPanel = function(){
+      document.getElementById("dashboard-panel").style.display="flex";
+      renderDashboardTab(currentDashboardTab);
+      // صورة بروفايل أول حرف من الاسم
+      if(userData && userData.name)
+        document.getElementById("profile-pic").textContent = userData.name.trim()[0];
+    }
+    window.closeDashboardPanel = function(){
+      document.getElementById("dashboard-panel").style.display="none";
+    }
+    // محتوى لوحة التحكم
+    window.renderDashboardTab = function(tab="myapps") {
+      currentDashboardTab = tab;
+      let content = "";
+      // طلباتي
+      let myapps = allApplications.filter(a=>a.phone===userData?.phone);
+      content += `<div class="dash-section">
+        <h3>طلباتي المقدمة</h3>`;
+      if(!myapps.length) content += "<div>لا يوجد طلبات بعد.</div>";
+      else myapps.forEach(a=>{
+        content += `<div class="myapp-card">
+          <span class="myapp-title">${a.jobTitle}</span>
+          <span class="myapp-status">${a.status||"قيد المراجعة"}</span>
+          <div class="myapp-date">تاريخ التقديم: ${new Date(a.timestamp).toLocaleString("ar-EG")}</div>
+          <div>الشركة: ${a.company||"--"} | الراتب: ${a.salary} | نوع الوظيفة: ${a.type}</div>
+        </div>`;
+      });
+      content += `</div>`;
+      // المفضلة
+      content += `<div class="dash-section">
+        <h3>الوظائف المفضلة</h3>`;
+      if(!favJobs.length) content += "<div>لا يوجد وظائف محفوظة.</div>";
+      else favJobs.forEach(idx=>{
+        let job = jobsData[idx];
+        if(job) content += `<div class="fav-card">
+          <span class="job-title">${job.title}</span>
+          <span style="margin-right:8px">${job.company}</span>
+          <span style="margin-right:8px">${job.province}</span>
+          <div class="fav-actions">
+            <button onclick="applyJob(${idx})">تقديم</button>
+            <button onclick="toggleFav(${idx})">إزالة</button>
+          </div>
+        </div>`;
+      });
+      content += `</div>`;
+      // السيرة الذاتية
+      let mycv = allCVs.find(c=>c.phone===userData?.phone);
+      content += `<div class="dash-section">
+        <h3>السيرة الذاتية</h3>
+        <textarea id="cv-text" class="cv-box" style="width:98%;height:90px;border-radius:8px;padding:8px;margin-bottom:7px;">${mycv?mycv.cv:""}</textarea>
+        <button onclick="saveMyCV()">حفظ السيرة الذاتية</button>
+        ${mycv && mycv.cv ? `<div class="cv-box" style="margin-top:6px;"><b>معاينة:</b><br>${mycv.cv.replace(/\n/g,"<br>")}</div>`:""}
+      </div>`;
+      window.saveMyCV = function(){
+        if(!userData) return showToast("سجل الدخول أولا");
+        window.setDB(window.refDB(window.db,"cvs/"+userData.phone), {
+          ...userData,
+          cv: document.getElementById("cv-text").value,
+          timestamp: new Date().toISOString()
+        });
+        showToast("تم حفظ السيرة الذاتية!");
+      }
+      // بياناتي الشخصية
+      content += `<div class="dash-section">
+        <h3>بياناتي الشخصية</h3>
+        <div class="profile-info">
+          <div>الاسم: ${userData?.name||"--"}</div>
+          <div>الهاتف: ${userData?.phone||"--"}</div>
+          <div>المحافظة: ${userData?.province||"--"}</div>
+          <div>البريد الإلكتروني: ${userData?.email||"--"}</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+      </div>`;
+      window.logout = function(){
+        localStorage.removeItem("ruyaJobsUser");
+        location.reload();
+      };
+      // تقييم الموقع
+      content += `<div class="dash-section">
+        <h3>قيّم تجربتك في الموقع</h3>
+        <div class="feedback-stars" id="site-rate-stars">${[1,2,3,4,5].map(i=>`<span id="star${i}" onclick="setSiteRate(${i})">★</span>`).join("")}</div>
+        <textarea id="site-feedback" placeholder="اكتب ملاحظاتك (اختياري)" style="width:98%;height:50px;border-radius:8px;padding:7px;"></textarea>
+        <button onclick="saveSiteFeedback()" style="margin-top:10px;">إرسال التقييم</button>
+      </div>`;
+      window.setSiteRate = function(val){for(let i=1;i<=5;i++)document.getElementById("star"+i).style.color=i<=val?"#f9d13d":"#ccc";window.siteRating=val;}
+      window.saveSiteFeedback = function(){
+        if(!window.siteRating) return showToast("يرجى اختيار عدد النجوم");
+        showToast("شكرًا لملاحظاتك!");
+      }
+
+      // إحصائيات
+      content += `<div class="dash-section">
+        <h3>إحصائياتك</h3>
+        <div class="stats-box">عدد الوظائف في الموقع: ${jobsData.length}</div>
+        <div class="stats-box">عدد الطلبات: ${myapps.length}</div>
+        <div class="stats-box">عدد الوظائف المفضلة: ${favJobs.length}</div>
+      </div>`;
+
+      document.getElementById("dashboard-content").innerHTML = content;
+    }
+  </script>
+</body>
+</html>
