@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>بوابة وظائف رؤيا | الأردن</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css?family=Tajawal:400,700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Tajawal', Arial, sans-serif; background: linear-gradient(135deg, #f8fafc 0%, #e4ecf7 100%); margin: 0; padding: 0; color: #222; min-height: 100vh; }
+    body.dark { background: #241740; color:#fff; }
+    header { background: #6900ad; color: #fff; padding: 20px 0 10px 0; text-align: center; box-shadow: 0 3px 16px #865fc44d; position:relative; }
+    .logo { height: 62px; margin-bottom: 6px; }
+    .container { max-width: 1200px; margin: 32px auto 18px auto; padding: 18px; background: #fff; border-radius: 20px; box-shadow: 0 2px 22px #a97be73f; }
+    body.dark .container { background: #241740; color: #e7e5f7; }
+    .stats { display: flex; gap: 20px; justify-content: center; margin: 18px 0 30px 0; flex-wrap: wrap; }
+    .stat { background: #6900ad; color: #fff; padding: 18px 32px; border-radius: 15px; font-size: 1.1rem; font-weight: 600; min-width: 150px; }
+    .jobs-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; }
+    .job-card { background: #fff; border: 1.5px solid #d6c6ed; border-radius: 16px; padding: 22px 18px 18px 18px; box-shadow: 0 6px 36px #a97be713; }
+    body.dark .job-card { background: #2b1d45; color: #ebebf8; border-color: #51306d; }
+    .job-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .job-icon { font-size: 2.2rem; background: #f1e7ff; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+    .job-img { width: 42px; height: 42px; border-radius: 50%; object-fit:cover; background:#eee; }
+    body.dark .job-icon { background: #321e53; }
+    .job-title { font-size: 1.19rem; font-weight: bold; color: #6900ad; }
+    body.dark .job-title { color: #f9d13d; }
+    .job-info-table { width: 100%; font-size: 1.05rem; margin: 8px 0 8px 0; }
+    .salary { font-weight: bold; color: #0a6c19; }
+    body.dark .salary { color: #89fa8e; }
+    .apply-btn { background: linear-gradient(90deg, #8400d3 0%, #a97be7 100%); color: #fff; border: none; border-radius: 10px; padding: 11px 0; font-size: 1.1rem; font-weight: 700; cursor: pointer; width: 100%; }
+    #dark-toggle { position:fixed;top:24px;left:28px;z-index:11111;background:#fff;border-radius:50%;width:43px;height:43px;display:flex;align-items:center;justify-content:center; font-size:1.7rem;color:#6900ad; }
+    #toast { min-width:200px;position:fixed;bottom:95px;left:40px;z-index:10000;background:#6900ad;color:#fff; padding:14px 30px;border-radius:12px;display:none;font-size:1.08rem; }
+    footer { background: #f7f2ff; color: #6900ad; text-align: center; padding: 18px 0 10px 0; border-radius: 18px 18px 0 0; font-size: 1.07rem; margin: 23px 0 0 0; box-shadow: 0 -2px 12px #a97be71a; }
+    .modal-bg { position: fixed; inset: 0; background: #0008; z-index: 10000; display: flex; align-items: center; justify-content: center;}
+    .modal { background: #fff; border-radius: 18px; max-width: 98vw; width: 370px; box-shadow: 0 4px 32px #6900ad3a; padding: 38px 20px 28px 20px; text-align: center;}
+    #login-modal-bg {display:none;}
+    .success { color: #127c01; font-size: 1.09rem; margin:12px 0;font-weight: bold;}
+    .pending { color: #ad6c00;font-size:1.07rem;margin:12px 0;font-weight: bold;}
+    .rejected { color: #b30000;font-size:1.07rem;margin:12px 0;font-weight: bold;}
+    .pay-info { background: #f7f3ff; border-radius: 12px; padding: 10px; margin:10px 0 14px 0; color: #6900ad; font-size:1.08rem;}
+    .pay-info .amount { color:#b30000;font-weight:700;font-size:1.13rem;}
+    .pay-info .benef { color:#127c01;font-weight:600;}
+    .pay-info .bank { color:#6900ad;font-weight:600;}
+    .pay-info .ref { color:#0a6c19;font-weight:700;}
+    .logo-upload {width:120px;margin:auto;display:block;}
+    .site-title {font-size:2.1rem;font-weight:700;}
+    .site-subtitle {font-size:1.13rem;color:#6900ad;}
+    .req-status {font-size:1.09rem;font-weight:700;margin:8px 0;}
+    .req-status.pending {color:#ad6c00;}
+    .req-status.approved {color:#127c01;}
+    .req-status.rejected {color:#b30000;}
+    @media (max-width: 700px) {
+      .container { padding: 6px; }
+      .stats { flex-direction: column; gap: 12px; }
+      .modal { width: 97vw; padding: 28px 3vw 20px 3vw; }
+      .job-card { padding: 12px 3px 10px 3px; }
+      #dark-toggle { left: 12px; top: 12px; }
+    }
+  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+  <div id="dark-toggle" title="الوضع الليلي/النهاري">🌙</div>
+  <header>
+    <img class="logo" id="logo-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/ROYA_TV_LOGO.svg/512px-ROYA_TV_LOGO.svg.png" alt="شعار رؤيا"/>
+    <div class="site-title" id="site-title">بوابة وظائف رؤيا</div>
+    <div class="site-subtitle" id="site-subtitle">كل فرص العمل المتوفرة في الأردن بين يديك — تصفح وقدم بذكاء!</div>
+  </header>
+  <div class="container">
+    <div class="stats">
+      <div class="stat" id="stat-jobs">عدد الوظائف المتاحة: <span>--</span></div>
+      <div class="stat" id="stat-apps">طلبات اليوم: <span>--</span></div>
+    </div>
+    <div style="margin-bottom:14px; text-align:center;">
+      <input id="search" type="text" placeholder="ابحث عن وظيفة أو كلمة مفتاحية..." />
+      <select id="filter-province">
+        <option value="">كل المحافظات</option>
+        <option>عمان</option><option>إربد</option><option>الزرقاء</option><option>العقبة</option>
+        <option>المفرق</option><option>السلط</option><option>جرش</option>
+        <option>عجلون</option><option>مأدبا</option><option>الكرك</option>
+        <option>الطفيلة</option><option>معان</option>
+      </select>
+    </div>
+    <div class="jobs-list" id="jobs-list"></div>
+    <button style="margin:14px auto;display:block;" onclick="showRequests()">متابعة طلباتي</button>
+  </div>
+  <footer id="footer-msg">جميع الحقوق محفوظة &copy; قناة رؤيا 2025 — تصميم وتطوير: فريق رؤيا الرقمي</footer>
+  <div id="toast"></div>
+  <!-- تسجيل دخول -->
+  <div class="modal-bg" id="login-modal-bg">
+    <div class="modal" id="login-modal">
+      <h2>تسجيل الدخول</h2>
+      <input type="text" id="name-input" placeholder="الاسم الكامل" />
+      <input type="tel" id="phone-input" placeholder="رقم الهاتف" maxlength="10"/>
+      <select id="province-input">
+        <option value="">اختر المحافظة</option>
+        <option>عمان</option><option>إربد</option><option>الزرقاء</option><option>العقبة</option>
+        <option>المفرق</option><option>السلط</option><option>جرش</option>
+        <option>عجلون</option><option>مأدبا</option><option>الكرك</option>
+        <option>الطفيلة</option><option>معان</option>
+      </select>
+      <input type="text" id="address-input" placeholder="عنوان السكن" />
+      <button id="login-btn">دخول</button>
+      <div id="login-error"></div>
+    </div>
+  </div>
+  <!-- مودال التقديم -->
+  <div class="modal-bg" id="apply-modal-bg" style="display:none">
+    <div class="modal" id="apply-modal"></div>
+  </div>
+  <!-- مودال الطلبات -->
+  <div class="modal-bg" id="req-modal-bg" style="display:none">
+    <div class="modal" id="req-modal"></div>
+  </div>
+  <script>
+    // Firebase config (ضع بيانات مشروعك هنا)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC8Gx2IJRDTMzR42_kbv_tuT9i11-KRzk",
+      authDomain: "royajobs.firebaseapp.com",
+      databaseURL: "https://royajobs-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "royajobs",
+      storageBucket: "royajobs.firebasestorage.app",
+      messagingSenderId: "914105960159",
+      appId: "1:914105960159:web:d5f17f3edc5e26a5b58b6a",
+      measurementId: "G-N7C9WJZBD8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // تحميل النصوص والشعار من فايربيس
+    function loadSiteSettings() {
+      db.ref("settings").once("value", snap=>{
+        const s = snap.val()||{};
+        if(s.title) document.getElementById("site-title").textContent=s.title;
+        if(s.subtitle) document.getElementById("site-subtitle").textContent=s.subtitle;
+        if(s.logo) document.getElementById("logo-img").src=s.logo;
+        if(s.footer) document.getElementById("footer-msg").textContent=s.footer;
+      });
+    }
+    loadSiteSettings();
+
+    // الوظائف من فايربيس
+    let jobsData = [], jobsKeys = [];
+    let myProvince = "";
+    let myPhone = "";
+    let myUser = null;
+    function loadJobs() {
+      db.ref("jobs").once("value", snap => {
+        if(snap.exists()){
+          jobsData = Object.values(snap.val());
+          jobsKeys = Object.keys(snap.val());
+          renderJobs();
+        } else {
+          jobsData = [];
+          jobsKeys = [];
+          renderJobs();
+        }
+      });
+    }
+    function renderJobs(filter="") {
+      let jobs = jobsData;
+      if(myProvince) jobs = jobs.filter(j=>j.province===myProvince);
+      if(filter && filter.trim()!=="") jobs = jobs.filter(j => (j.title+j.desc+j.company+j.province+j.type).includes(filter));
+      const list = document.getElementById("jobs-list");
+      list.innerHTML = "";
+      if(!jobs.length) list.innerHTML = `<div style="font-size:1.16rem;padding:44px 0;">لا توجد وظائف متاحة حالياً في هذه المحافظة.</div>`;
+      jobs.forEach((job, idx) => {
+        let imgHtml = job.img ? `<div class="job-icon">${job.img}</div>` : "";
+        if(job.imgUrl) imgHtml = `<img class="job-img" src="${job.imgUrl}" alt="صورة">`;
+        list.innerHTML += `
+        <div class="job-card">
+          <div class="job-header">${imgHtml}<div class="job-title">${job.title}</div></div>
+          <div class="job-desc">${job.desc||""}</div>
+          <table class="job-info-table">
+            <tr><td>الشركة:</td><td>${job.company||"--"}</td></tr>
+            <tr><td>النوع:</td><td>${job.type||"--"}</td></tr>
+            <tr><td>الخبرة:</td><td>${job.exp||"--"}</td></tr>
+            <tr><td>الراتب:</td><td class="salary">${job.salary||"--"} دينار</td></tr>
+            <tr><td>ساعات العمل:</td><td>${job.hours||"--"} ساعة</td></tr>
+          </table>
+          <button class="apply-btn" onclick="openApplyModal('${jobsKeys[idx]}')">تقديم الآن</button>
+        </div>`;
+      });
+      document.querySelector("#stat-jobs span").textContent = jobs.length;
+      db.ref("applications").once("value", snap=>{
+        let allApps = snap.exists()?Object.values(snap.val()):[];
+        document.querySelector("#stat-apps span").textContent = allApps.filter(a=>a.timestamp && new Date(a.timestamp).toDateString()===new Date().toDateString()).length;
+      });
+    }
+    document.getElementById("search").oninput = function() { renderJobs(this.value); }
+    document.getElementById("filter-province").onchange = function(){
+      myProvince = this.value;
+      renderJobs(document.getElementById("search").value);
+    }
+    // الوضع الليلي
+    let dark = localStorage.getItem("darkMode")==="1";
+    function setDarkMode(on) {
+      dark = on;
+      if(on) document.body.classList.add("dark"); else document.body.classList.remove("dark");
+      localStorage.setItem("darkMode",on?"1":"0");
+    }
+    setDarkMode(dark);
+    document.getElementById("dark-toggle").onclick = function(){ setDarkMode(!dark);}
+    window.showToast = function(msg, duration=2500) {
+      let toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(()=>{toast.style.display="none";}, duration);
+    }
+
+    // تسجيل دخول المستخدم
+    window.onload = function() {
+      // تحقق من الجلسة
+      if(!localStorage.getItem("ruyaJobsUser")){
+        document.getElementById("login-modal-bg").style.display="flex";
+      } else {
+        myUser = JSON.parse(localStorage.getItem("ruyaJobsUser"));
+        myProvince = myUser.province;
+        myPhone = myUser.phone;
+        document.getElementById("province-input").value = myProvince;
+        document.getElementById("filter-province").value = myProvince;
+        loadJobs();
+      }
+    };
+    document.getElementById("login-btn").onclick = function() {
+      const name = document.getElementById("name-input").value.trim();
+      const phone = document.getElementById("phone-input").value.trim();
+      const province = document.getElementById("province-input").value;
+      const address = document.getElementById("address-input").value.trim();
+      let error = "";
+      if(!name) error = "يرجى إدخال الاسم";
+      else if(!/^07[789]\d{7}$/.test(phone)) error = "يرجى إدخال رقم هاتف أردني صحيح";
+      else if(!province) error = "يرجى اختيار المحافظة";
+      else if(!address) error = "يرجى إدخال عنوان السكن";
+      if(error) { document.getElementById("login-error").textContent = error; return; }
+      myUser = { name, phone, province, address, uid: phone };
+      myProvince = province;
+      myPhone = phone;
+      localStorage.setItem("ruyaJobsUser", JSON.stringify(myUser));
+      db.ref("users/"+phone).set({...myUser, timestamp: new Date().toISOString()});
+      document.getElementById("login-modal-bg").style.display = "none";
+      document.getElementById("filter-province").value = province;
+      loadJobs();
+    };
+
+    // تقديم الطلب
+    window.openApplyModal = function(jobKey) {
+      const modal = document.getElementById("apply-modal");
+      let step = 0, appId = null, job = null, appStatus = "pending", adminMsg = "";
+      // جلب بيانات الوظيفة
+      db.ref("jobs/"+jobKey).once("value", snap=>{
+        job = snap.val();
+        renderStep();
+      });
+      function nextStep() {
+        step++;
+        renderStep();
+      }
+      function renderStep() {
+        if(step===0){
+          modal.innerHTML = `
+            <h2>تقديم طلب التوظيف</h2>
+            <div style="font-size:1.12rem;margin-bottom:9px;"><b>${(job.img||"💼")} ${job.title}</b></div>
+            <div>الشركة: <b>${job.company||"--"}</b></div>
+            <div>ساعات العمل: <b>${job.hours||"--"}</b></div>
+            <div style="margin:7px 0 14px 0;">هل أنت متأكد من رغبتك بالتقديم لهذه الوظيفة؟</div>
+            <button style="margin-top:11px;" onclick="nextStep()">متابعة الإجراءات</button>
+            <button style="margin-top:8px;background:#f7f2ff;color:#6900ad;border:1px solid #6900ad;" onclick="closeApplyModal()">إلغاء</button>
+          `;
+        } else if(step===1){
+          // حفظ الطلب بفايربيس
+          let user = myUser;
+          appId = db.ref("applications").push({
+            ...user,
+            jobId: job.id,
+            jobKey,
+            jobTitle: job.title,
+            company: job.company,
+            province: job.province,
+            salary: job.salary,
+            hours: job.hours,
+            type: job.type,
+            status: "pending",
+            adminMsg: "",
+            timestamp: new Date().toISOString()
+          }).key;
+          modal.innerHTML = `
+            <h2>طلبك قيد المراجعة</h2>
+            <div class="pending">تم استلام طلبك بنجاح، سيتم مراجعته من قبل فريق التوظيف.</div>
+            <div style="margin-top:13px;">يمكنك متابعة حالة طلبك من زر <b>"متابعة طلباتي"</b>.</div>
+            <button style="margin-top:18px;" onclick="closeApplyModal()">إغلاق</button>
+          `;
+        }
+      }
+      window.nextStep = nextStep;
+      renderStep();
+      document.getElementById("apply-modal-bg").style.display="flex";
+    }
+    window.closeApplyModal = function() {
+      document.getElementById("apply-modal-bg").style.display="none";
+    }
+
+    // متابعة طلباتي (للمستخدم)
+    window.showRequests = function(){
+      let user = myUser;
+      const modal = document.getElementById("req-modal");
+      db.ref("applications").orderByChild("phone").equalTo(user.phone).once("value",snap=>{
+        const apps = snap.exists()?Object.values(snap.val()):[];
+        let html = `<h2>طلباتي</h2>`;
+        if(apps.length==0) html+=`<div>لا يوجد طلبات بعد.</div>`;
+        else apps.reverse().forEach(a=>{
+          html += `<div style="border-bottom:1px solid #eee;margin-bottom:8px;padding-bottom:5px;">
+            <b>${a.jobTitle}</b> - <span style="color:#6900ad;">${a.status=="pending"?"بانتظار موافقة الإدارة":a.status=="approved"?"تمت الموافقة":"مرفوض"}</span>
+            <div class="req-status ${a.status}">${a.status=="pending"?"بانتظار الموافقة من المشرف":a.status=="approved"?"تمت الموافقة على طلبك!":"تم رفض الطلب"}</div>
+            <div>الشركة: ${a.company||"--"} | الراتب: ${a.salary||"--"} | المحافظة: ${a.province||"--"}</div>
+            <div>تاريخ التقديم: ${a.timestamp?new Date(a.timestamp).toLocaleString("ar-EG"):"--"}</div>
+            ${a.status=="approved"?`
+              <div class="pay-info">
+                <div style="font-weight:700;color:#6900ad;">لإتمام حجز الوظيفة يجب دفع رسوم الحجز:</div>
+                <span class="amount">32.5 دينار</span><br>
+                <span>تشمل: رسوم إصدار شهادة عدم محكومية فورية، ضريبة، رسوم طوابع</span><br>
+                <div style="color:#127c01;font-weight:600;margin:7px 0 3px 0;">طريقة الدفع:</div>
+                <div>مدير التوظيف كليك <b>(الاسم المستعار: royajobs)</b></div>
+                <div class="bank">البنك الأهلي الأردني</div>
+                <div style="font-size:.97rem;margin-top:6px;color:#ad6c00;">المبلغ يُسترد في حال أبلغت بعدم الحضور قبل موعد الوظيفة.</div>
+              </div>
+            `:""}
+            ${a.status=="rejected" && a.adminMsg?`<div class="rejected">سبب الرفض: ${a.adminMsg}</div>`:""}
+          </div>`;
+        });
+        html += `<button style="margin-top:14px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="closeReqModal()">إغلاق</button>`;
+        modal.innerHTML = html;
+        document.getElementById("req-modal-bg").style.display="flex";
+      });
+    }
+    window.closeReqModal = function() {
+      document.getElementById("req-modal-bg").style.display="none";
+    }
+    document.getElementById("req-modal-bg").onclick = function(e){ if(e.target===this) closeReqModal();}
+    document.getElementById("apply-modal-bg").onclick = function(e){ if(e.target===this) closeApplyModal();}
+    // حماية الخروج من جلسة المستخدم (تسجيل خروج يدوي فقط من LocalStorage)
+  </script>
+</body>
+</html>
