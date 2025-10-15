@@ -369,6 +369,10 @@
 
     // تقديم الطلب (خطوات رسمية ومحسنة)
     window.openApplyModal = function(jobKey) {
+      if (!myUser) {
+        window.showToast("يرجى تسجيل الدخول أولاً.");
+        return;
+      }
       db.ref("applications").orderByChild("deviceId").equalTo(deviceId).once("value", snap=>{
         let apps = snap.exists()?Object.values(snap.val()):[];
         let activeApp = apps.find(a => a.status === "approved" && a.paymentStatus !== "done");
