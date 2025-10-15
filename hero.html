@@ -1,732 +1,476 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <title>لوحة تحكم إدارة وظائف رؤيا</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css?family=Tajawal:400,700&display=swap" rel="stylesheet">
-  <link rel="icon" href="https://www2.0zz0.com/2025/10/15/17/197165129.png">
+  <meta charset="UTF-8">
+  <title>لوحة تحكم المشرف - منصة الوظائف الأردنية</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getDatabase, ref, set, push, update, remove, onValue, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyCtvxXiWWZ4GxWxz1rAhu9nRwiFlkiKMtA",
+      authDomain: "royanew-a02f3.firebaseapp.com",
+      projectId: "royanew-a02f3",
+      storageBucket: "royanew-a02f3.firebasestorage.app",
+      messagingSenderId: "640968299159",
+      appId: "1:640968299159:web:590e4256ad1492ca19cfd2",
+      measurementId: "G-69TLG6LYYK",
+      databaseURL: "https://royanew-a02f3-default-rtdb.firebaseio.com"
+    };
+    window.app = initializeApp(firebaseConfig);
+    window.db = getDatabase(app);
+    window.ref = ref;
+    window.push = push;
+    window.set = set;
+    window.update = update;
+    window.remove = remove;
+    window.onValue = onValue;
+    window.get = get;
+  </script>
   <style>
     body {
-      font-family: 'Tajawal', Arial, sans-serif;
-      background: linear-gradient(135deg, #e8eafc 0%, #e4ecf7 100%);
-      margin: 0; padding: 0; color: #222; min-height: 100vh;
-      transition: background 0.3s;
-    }
-    body.dark { background: #2d1d44; color:#fff; }
-    header {
-      background: #6900ad;
-      color: #fff;
-      padding: 22px 0 14px 0;
-      text-align: center;
-      box-shadow: 0 3px 16px #865fc44d;
-      position:relative;
+      font-family: "Cairo", Arial, sans-serif;
+      background: linear-gradient(135deg, #f4f6f8 60%, #e4f1fb 100%);
+      margin: 0;
+      color: #222;
     }
     .logo {
-      height: 68px; margin-bottom: 8px;
+      display:block;
+      margin: 30px auto 10px auto;
+      width: 130px;
       border-radius: 16px;
-      box-shadow: 0 2px 18px #fff9, 0 0px 0 #fff0;
-      background: #fff5;
-    }
-    .admin-wrapper {
-      max-width:1150px;margin:40px auto 0 auto;padding:0 12px;
-      display:flex; gap:22px; flex-wrap:wrap; align-items:flex-start;
-    }
-    .card {
+      box-shadow: 0 2px 12px #aaa;
       background: #fff;
-      border-radius: 22px;
-      box-shadow: 0 6px 36px #a97be71a, 0 1.5px 0 #fff4;
-      padding: 2.3em 2em 2em 2em;
-      margin-bottom: 30px;
-      flex:1 1 340px;
-      min-width:340px;
-      max-width:100%;
-      transition:box-shadow 0.2s;
-      position:relative;
+      padding: 10px;
     }
-    body.dark .card { background: #372563; color: #f3eafd; }
-    .card-title {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: #6900ad;
-      margin-bottom: 18px;
-      display:flex;align-items:center;gap:6px;
+    .main-box {
+      max-width: 480px;
+      margin: 25px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 2px 12px #b0d4ed;
+      padding: 28px 24px 18px 24px;
+      text-align: right;
     }
-    body.dark .card-title { color: #f9d13d; }
-    .site-settings label {
-      font-weight:600;font-size:1.07rem;margin-right:9px;
+    h1 {
+      text-align: center;
+      color: #2196f3;
+      margin-top: 0;
     }
-    .site-settings input[type="text"] {
-      border-radius:12px;
-      border:1.5px solid #cbb7eb;
-      font-size:1.12rem;
-      padding:8px 13px;
-      margin-bottom:10px;
-      margin-right:5px;
-      outline: none;
-      width:70%;
-      max-width:370px;
-      background:#f7f2ff;
-      transition: border 0.2s;
+    .hidden { display: none; }
+    .tab-btn {
+      background: #2196f3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 3px 7px 0 0;
+      transition: background 0.2s;
+      box-shadow: 0 1px 6px #b0d4ed;
+      display:inline-block;
     }
-    .site-settings input[type="color"] {
-      width:60px;height:38px;border-radius:12px;border:none;margin-right:8px;vertical-align:middle;
+    .tab-btn.active { background: #1769aa; }
+    .tab-content { margin-top: 18px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #f7fbff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px #b0d4ed;
+      overflow: hidden;
     }
-    .site-settings .row {margin-bottom:10px;}
-    .admin-btn {
-      background:linear-gradient(90deg,#6900ad 60%,#a97be7 100%);
-      color:#fff;border:none;border-radius:10px;padding:8px 19px;cursor:pointer;
-      font-weight:700;font-size:1.05rem;transition:background .15s;
-      margin-right:8px;margin-bottom:8px;
-      box-shadow:0 2px 8px #6900ad22;
+    th, td {
+      padding: 7px 5px;
+      border-bottom: 1px solid #dfe8f3;
+      text-align: right;
+      font-size: 0.97rem;
     }
-    .admin-btn.danger {background:#b30000;}
-    .admin-btn.reset {background:#aaa;}
-    .admin-btn.light {background:#f7f2ff;color:#6900ad;border:1.5px solid #6900ad;}
-    .admin-btn:active {transform:scale(0.97);}
-    .logo-preview {
-      width:110px;max-height:90px;object-fit:contain;display:block;margin:0 auto 10px auto;cursor:pointer;border-radius:12px;
-      background:#f7f2ff;padding:6px 0;box-shadow:0 2px 8px #bba2f633;
+    th { background: #e4f1fb; color: #1976d2; }
+    tr:last-child td { border-bottom: none; }
+    .edit-btn, .del-btn, .add-btn, .save-btn, .cancel-btn {
+      border: none; border-radius: 6px; cursor: pointer; padding: 5px 11px;
+      margin: 1px 2px; font-size: 0.95rem;
     }
-    .stats-bar {
-      display:flex;gap:23px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;
-    }
-    .stat {
-      background:#6900ad;color:#fff;padding:18px 29px;border-radius:15px;
-      font-size:1.09rem;font-weight:700;min-width:130px;box-shadow:0 2px 18px #a97be73f;
-      display:flex;align-items:center;gap:8px;
-    }
-    .logout-btn {
-      background:#f9d13d;color:#6900ad;font-weight:700;border:none;
-      border-radius:12px;padding:8px 24px;margin-top:0;cursor:pointer;font-size:1.1rem;
-      float:left;position:absolute;left:22px;top:18px;box-shadow:0 2px 12px #6900ad19;
-    }
-    .supervisors-table, .users-table, .jobs-table {
-      width:100%; border-collapse:collapse; margin: 0 0 10px 0;
-    }
-    .supervisors-table th, .supervisors-table td,
-    .users-table th, .users-table td,
-    .jobs-table th, .jobs-table td {
-      border:1px solid #d6c6ed;padding:7px 10px;font-size:1.01rem;
-    }
-    .supervisors-table th, .users-table th, .jobs-table th {
-      background:#efecfa;
-      color:#6900ad;
-      font-weight:700;
-    }
-    .jobs-table tr:nth-child(even) td,
-    .users-table tr:nth-child(even) td {
-      background:#f7f2ff;
-    }
-    .search-box {
-      padding:7px 13px;border-radius:12px;border:1.5px solid #cbb7eb;
-      font-size:1.09rem;margin:0 9px 15px 0;width:220px;outline:none;
-    }
-    .card-list {display:flex;flex-wrap:wrap;gap:15px;}
-    .job-card-admin {
-      background:#f7f2ff;padding:13px 14px 11px 14px;border-radius:13px;
-      min-width:260px;flex:1 1 265px;box-shadow:0 1px 10px #a97be77a;
-      margin-bottom:13px;position:relative;
-      display:flex;flex-direction:column;gap:9px;
-    }
-    .job-card-admin .job-title {font-size:1.13rem;font-weight:700;color:#6900ad;}
-    .job-card-admin .job-company {font-size:0.98rem;margin-bottom:4px;}
-    .job-card-admin .job-actions {
-      margin-top:5px;display:flex;gap:7px;flex-wrap:wrap;
-    }
-    .job-card-admin .job-img {width:44px;height:44px;border-radius:50%;object-fit:cover;background:#eee;margin-left:8px;}
-    .badge {background:#efecfa;color:#6900ad;border-radius:8px;padding:2px 9px;margin-right:6px;}
-    .status-badge {font-weight:700;font-size:1.01rem;padding:2px 8px;border-radius:8px;}
-    .status-badge.pending {background:#fff5d6;color:#ad6c00;}
-    .status-badge.approved {background:#e0ffd9;color:#127c01;}
-    .status-badge.rejected {background:#ffd8d6;color:#b30000;}
-    .ready-jobs-list {margin-bottom:12px;max-height:220px;overflow:auto;}
-    .ready-jobs-list option {font-size:1.09rem;}
-    .dark-toggle {
-      position:fixed;top:24px;left:28px;z-index:11111;background:#fff;
-      border-radius:50%;width:43px;height:43px;display:flex;align-items:center;justify-content:center;
-      font-size:1.7rem;color:#6900ad;box-shadow:0 1px 12px #6900ad19;cursor:pointer;
-    }
-    @media (max-width: 800px) {
-      .admin-wrapper {flex-direction:column;gap:0;}
-      .card {padding:1.1em 4vw;}
-      .logout-btn {position:static;float:none;display:block;margin:0 auto 15px auto;}
-    }
-    @media (max-width: 600px) {
-      .card {min-width:96vw;}
-      .card-list {flex-direction:column;}
-      .logout-btn {margin-bottom:17px;}
-      .stats-bar {flex-direction:column;gap:12px;}
-      .logo-preview {width:70px;}
-    }
-    #toast {
-      min-width:200px;position:fixed;bottom:45px;left:50%;transform:translateX(-50%);
-      z-index:10000;background:#6900ad;color:#fff; padding:14px 30px;
-      border-radius:12px;display:none;font-size:1.08rem;
-      box-shadow:0 2px 18px #a97be73f;
-    }
-    /* Modal Styles */
-    .modal-bg {
-      display:none;position:fixed;inset:0;background:#0007;z-index:10000;
-      align-items:center;justify-content:center;
-    }
-    .modal {
-      background:#fff;border-radius:24px;max-width:98vw;width:380px;
-      box-shadow:0 4px 32px #6900ad3a;padding:44px 26px 33px 26px;text-align:center;
-      display:flex;flex-direction:column;gap:10px;align-items:center;
-      position:relative;
-    }
-    .modal input, .modal select {
-      border:1.5px solid #cbb7eb;border-radius:13px;padding:10px 12px;font-size:1.13rem;
-      width:85%;margin-bottom:9px;outline:none;background:#f7f2ff;
-    }
-    .modal .modal-title {font-size:1.22rem;font-weight:700;color:#6900ad;margin-bottom:8px;}
-    .modal .modal-icon {font-size:2.4rem;margin-bottom:11px;color:#a97be7;}
-    .modal .modal-btn {margin-top:13px;}
-    .modal .err {color:#b30000;font-size:1rem;}
-    .modal .close-x {position:absolute;top:8px;left:14px;font-size:1.34rem;cursor:pointer;}
-    .modal input[type="password"] {letter-spacing:2px;}
-    .modal input[type="file"] {background:#fff;border:none;}
+    .edit-btn { background: #ffb300; color: #fff; }
+    .del-btn { background: #d32f2f; color: #fff; }
+    .save-btn { background: #43a047; color: #fff;}
+    .cancel-btn { background: #888; color: #fff;}
+    .add-btn { background: #2196f3; color: #fff; margin-bottom:6px;}
+    .job-form input, .job-form select { width:96%; padding:4px; margin-bottom:5px; border-radius:5px; border:1px solid #b0d4ed; font-size:1rem;}
+    .job-form { background:#f7fbff; border-radius:8px; padding:12px; margin-bottom:10px;}
+    .supervisor-box { background: #f7fbff; padding: 8px 12px; border-radius: 12px; box-shadow: 0 1px 6px #b0d4ed; margin-bottom: 14px;}
+    .contract-img { max-width: 320px; border-radius: 8px; box-shadow: 0 1px 6px #b0d4ed;}
+    .small-note { color: #888; font-size: 0.91rem;}
+    @media (max-width: 600px){ .main-box{padding: 13px 2vw;} }
   </style>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
-  <div class="dark-toggle" id="dark-toggle" title="الوضع الليلي/النهاري">🌙</div>
-  <header>
-    <img class="logo" id="logo-img" src="https://www2.0zz0.com/2025/10/15/17/197165129.png" alt="شعار رؤيا"/>
-    <h2 style="font-size:2.1rem;margin-top:7px;">لوحة تحكم إدارة وظائف رؤيا</h2>
-  </header>
-  
-  <div class="admin-wrapper" id="admin-wrapper"></div>
-  <div id="toast"></div>
-
-  <!-- MODALS -->
-  <div class="modal-bg" id="admin-modal-bg">
-    <div class="modal" id="admin-modal">
-      <span class="close-x" onclick="hideModal('admin-modal-bg')">&times;</span>
-      <div class="modal-icon">🔒</div>
-      <div class="modal-title">دخول لوحة الإدارة</div>
-      <input type="text" id="admin-user" placeholder="اسم المستخدم الإداري" autocomplete="username"/>
-      <input type="password" id="admin-pass" placeholder="كلمة المرور" autocomplete="current-password"/>
-      <button class="admin-btn modal-btn" id="admin-login-btn">دخول</button>
-      <div id="admin-err" class="err"></div>
+  <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" class="logo" alt="شعار الموقع" />
+  <div class="main-box" id="mainBox">
+    <h1>لوحة تحكم المشرف</h1>
+    <!-- تسجيل الدخول -->
+    <form id="loginForm">
+      <label>اسم المستخدم</label>
+      <input type="text" id="loginUser" required maxlength="30" autocomplete="username"/>
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPass" required maxlength="30" autocomplete="current-password"/>
+      <button type="submit">دخول</button>
+      <div class="small-note" style="margin-top:9px;">اسم المستخدم: <b>Hero</b> | كلمة المرور: <b>Hero@282</b></div>
+    </form>
+    <!-- لوحة التحكم -->
+    <div id="adminPanel" class="hidden">
+      <div id="tabs">
+        <button class="tab-btn active" onclick="showTab('usersTab')">المسجلين</button>
+        <button class="tab-btn" onclick="showTab('jobsTab')">الوظائف</button>
+        <button class="tab-btn" onclick="showTab('contractsTab')">العقود</button>
+        <button class="tab-btn hidden" id="supervisorsTabBtn" onclick="showTab('supervisorsTab')">المشرفين</button>
+      </div>
+      <div class="tab-content" id="usersTab"></div>
+      <div class="tab-content hidden" id="jobsTab"></div>
+      <div class="tab-content hidden" id="contractsTab"></div>
+      <div class="tab-content hidden" id="supervisorsTab"></div>
     </div>
   </div>
-  <input type="file" id="logo-upload" style="display:none" accept="image/*">
-
-  <!-- إضافة وظيفة جاهزة -->
-  <div class="modal-bg" id="readyjob-modal-bg">
-    <div class="modal" id="readyjob-modal">
-      <span class="close-x" onclick="hideModal('readyjob-modal-bg')">&times;</span>
-      <div class="modal-title">إضافة وظيفة جاهزة</div>
-      <select id="ready-job-list" size="7" style="width:90%;margin-bottom:13px;"></select>
-      <button class="admin-btn" id="add-ready-job-btn">إضافة الوظيفة</button>
-      <div id="readyjob-err" class="err"></div>
-    </div>
-  </div>
-
   <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDC8Gx2IJRDTMzR42_kbv_tuT9i11-KRzk",
-      authDomain: "royajobs.firebaseapp.com",
-      databaseURL: "https://royajobs-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "royajobs",
-      storageBucket: "royajobs.firebasestorage.app",
-      messagingSenderId: "914105960159",
-      appId: "1:914105960159:web:d5f17f3edc5e26a5b58b6a",
-      measurementId: "G-N7C9WJZBD8"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    let isSuperHero = false;
+    let supervisors = {Hero: {name: "Hero", password: "Hero@282"}};
 
-    // الوضع الليلي
-    let dark = localStorage.getItem("darkMode")==="1";
-    function setDarkMode(on) {
-      dark = on;
-      if(on) document.body.classList.add("dark"); else document.body.classList.remove("dark");
-      localStorage.setItem("darkMode",on?"1":"0");
+    // البداية: جلب المشرفين من قاعدة البيانات أو إنشاءهم
+    async function loadSupervisors(){
+      let snap = await window.get(window.ref(window.db, 'supervisors/'));
+      if(snap.exists()) supervisors = snap.val();
+      else await window.set(window.ref(window.db, 'supervisors/'), supervisors);
     }
-    setDarkMode(dark);
-    document.getElementById("dark-toggle").onclick = function(){ setDarkMode(!dark);};
+    loadSupervisors();
 
-    // Toast
-    window.showToast = function(msg, duration=2700) {
-      let toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.style.display = "block";
-      setTimeout(()=>{toast.style.display="none";}, duration);
-    };
+    // تسجيل الدخول
+    document.getElementById("loginForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+      let user = document.getElementById("loginUser").value.trim();
+      let pass = document.getElementById("loginPass").value;
+      await loadSupervisors();
+      if(supervisors[user] && supervisors[user].password === pass){
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("adminPanel").classList.remove("hidden");
+        if(user === "Hero") {
+          isSuperHero = true;
+          document.getElementById("supervisorsTabBtn").classList.remove("hidden");
+        }
+        showTab('usersTab');
+        loadUsers();
+        loadJobs();
+        loadContracts();
+        if(isSuperHero) loadSupervisorsTab();
+      }else{
+        alert("بيانات الدخول غير صحيحة");
+      }
+    });
 
-    // Modal helpers
-    function showModal(id) { document.getElementById(id).style.display='flex'; }
-    function hideModal(id) { document.getElementById(id).style.display='none'; }
+    // إدارة علامات التبويب
+    function showTab(tab){
+      ["usersTab","jobsTab","contractsTab","supervisorsTab"].forEach(t=>{
+        document.getElementById(t).classList.add("hidden");
+        let btn=document.querySelector('.tab-btn[onclick*="'+t+'"]');
+        if(btn) btn.classList.remove("active");
+      });
+      document.getElementById(tab).classList.remove("hidden");
+      let btn=document.querySelector('.tab-btn[onclick*="'+tab+'"]');
+      if(btn) btn.classList.add("active");
+    }
 
-    // Ready Jobs (50 وظيفة جاهزة)
-    const readyJobs = [
-      {title:'محاسب',company:'شركة مالية',salary:500,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'💼',desc:'محاسب ذو خبرة في الحسابات والمالية.'},
-      {title:'مندوب مبيعات',company:'المتحدة للتسويق',salary:400,hours:7,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🤝',desc:'مندوب مبيعات ميداني/هاتفي.'},
-      {title:'سكرتيرة تنفيذية',company:'مكتب قانوني',salary:350,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنتين',img:'👩‍💼',desc:'تنظيم الاجتماعات ومتابعة البريد الإلكتروني.'},
-      {title:'سائق توصيل',company:'تطبيق دليفري',salary:380,hours:10,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🚗',desc:'توصيل طلبات للمنازل.'},
-      {title:'مدخل بيانات',company:'حلول الأعمال',salary:320,hours:6,province:'كل المحافظات',type:'دوام جزئي',exp:'بدون',img:'💻',desc:'إدخال البيانات على الكمبيوتر.'},
-      {title:'فني صيانة أجهزة',company:'الكترونيات الخليج',salary:450,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🛠️',desc:'فحص وصيانة الأجهزة.'},
-      {title:'مطور ويب',company:'رواد التقنية',salary:700,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنتين',img:'🌐',desc:'برمجة وتطوير مواقع إلكترونية.'},
-      {title:'خدمة عملاء',company:'شركاء النجاح',salary:300,hours:6,province:'كل المحافظات',type:'دوام جزئي',exp:'بدون',img:'📞',desc:'استقبال مكالمات العملاء وحل مشاكلهم.'},
-      {title:'مدرس لغة إنجليزية',company:'أكاديمية النخبة',salary:500,hours:6,province:'كل المحافظات',type:'دوام جزئي',exp:'سنة',img:'📚',desc:'تدريس الإنجليزية لجميع الأعمار.'},
-      {title:'ممرض/ة',company:'مركز صحي',salary:550,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🩺',desc:'تقديم الرعاية الصحية للمرضى.'},
-      {title:'مهندس مدني',company:'شركة مقاولات',salary:800,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'3 سنوات',img:'🏗️',desc:'إدارة مشاريع البناء والإشراف الهندسي.'},
-      {title:'حارس أمن',company:'الأمان المثالي',salary:320,hours:12,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🛡️',desc:'حراسة المنشآت والمباني.'},
-      {title:'محلل بيانات',company:'Data Solutions',salary:850,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنتين',img:'📊',desc:'تحليل البيانات باستخدام برامج متقدمة.'},
-      {title:'مندوب توصيل طلبات',company:'سوبر ماركت',salary:350,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🚴',desc:'توصيل الطلبات للعملاء.'},
-      {title:'كاشير',company:'سلسلة مطاعم',salary:320,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🧾',desc:'محاسبة الزبائن وإصدار الفواتير.'},
-      {title:'مصور فوتوغرافي',company:'ستوديو فن',salary:400,hours:6,province:'كل المحافظات',type:'دوام جزئي',exp:'سنة',img:'📷',desc:'تصوير مناسبات وأفراح.'},
-      {title:'مطور تطبيقات',company:'Arab Apps',salary:900,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنتين',img:'📱',desc:'برمجة تطبيقات أندرويد وآيفون.'},
-      {title:'مندوبة تسويق هاتفي',company:'مركز اتصالات',salary:350,hours:7,province:'كل المحافظات',type:'دوام جزئي',exp:'بدون',img:'☎️',desc:'تسويق منتجات عبر الهاتف.'},
-      {title:'مشرف مستودعات',company:'تجارة الجملة',salary:450,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'📦',desc:'إدارة وتنظيم المستودعات.'},
-      {title:'خياط/ة',company:'خياطة الأمل',salary:300,hours:6,province:'كل المحافظات',type:'دوام جزئي',exp:'بدون',img:'🧵',desc:'خياطة الملابس حسب الطلب.'},
-      // ... أضف 30 وظيفة أخرى حسب الحاجة
-      {title:'مسؤول موارد بشرية',company:'HR Solutions',salary:600,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'👔',desc:'إدارة شؤون الموظفين.'},
-      {title:'سائق شاحنة',company:'نقل البضائع',salary:650,hours:12,province:'كل المحافظات',type:'دوام كامل',exp:'سنتين',img:'🚚',desc:'نقل البضائع بين المدن.'},
-      {title:'مدير مشروع',company:'Tech Pro',salary:1100,hours:9,province:'كل المحافظات',type:'دوام كامل',exp:'5 سنوات',img:'📈',desc:'إدارة مشاريع تقنية ضخمة.'},
-      {title:'محرر فيديو',company:'استوديو مونتاج',salary:500,hours:7,province:'كل المحافظات',type:'دوام جزئي',exp:'سنة',img:'🎬',desc:'مونتاج وتحرير فيديوهات.'},
-      {title:'مساعد إداري',company:'شركة استثمارية',salary:400,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🗂️',desc:'مساعدة الإدارة في الأعمال اليومية.'},
-      {title:'شيف مطبخ',company:'مطعم خمس نجوم',salary:800,hours:9,province:'كل المحافظات',type:'دوام كامل',exp:'3 سنوات',img:'👨‍🍳',desc:'تحضير الأطباق العالمية.'},
-      {title:'مندوب عقارات',company:'عقارات الشرق',salary:450,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🏠',desc:'تسويق وبيع العقارات.'},
-      {title:'محامي متدرب',company:'مكتب قانوني',salary:350,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'⚖️',desc:'تدريب على القضايا القانونية.'},
-      {title:'مدرب لياقة',company:'نادي صحي',salary:330,hours:6,province:'كل المحافظات',type:'دوام جزئي',exp:'بدون',img:'🏋️',desc:'تدريب العملاء على التمارين.'},
-      {title:'بائع معرض سيارات',company:'معرض سيارات',salary:650,hours:9,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🚘',desc:'تسويق وبيع السيارات.'},
-      {title:'مصمم جرافيك',company:'شركة إعلان',salary:550,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🎨',desc:'تصميم إعلانات ومنشورات رقمية.'},
-      {title:'موظف استقبال',company:'فندق فاخر',salary:420,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🏨',desc:'استقبال الضيوف وتنظيم الحجوزات.'},
-      {title:'محلل نظم معلومات',company:'IT Group',salary:950,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'3 سنوات',img:'💾',desc:'تحليل نظم المعلومات ودعمها.'},
-      {title:'مساعد طبيب أسنان',company:'عيادة أسنان',salary:380,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'🦷',desc:'مساعدة الطبيب في العيادة.'},
-      {title:'أخصائي تسويق رقمي',company:'Digital Ads',salary:650,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'💡',desc:'إدارة الحملات الرقمية.'},
-      {title:'مربية أطفال',company:'حضانة أطفال',salary:300,hours:7,province:'كل المحافظات',type:'دوام جزئي',exp:'بدون',img:'🧒',desc:'رعاية وتعليم الأطفال.'},
-      {title:'مساعد صيدلي',company:'صيدلية طبية',salary:350,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'💊',desc:'مساعدة الصيدلي في المهام اليومية.'},
-      {title:'ضابط جودة',company:'مصنع منتجات',salary:480,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🔍',desc:'مراقبة جودة المنتجات.'},
-      {title:'مقدم برامج',company:'قناة فضائية',salary:1000,hours:7,province:'كل المحافظات',type:'دوام كامل',exp:'سنتين',img:'🎤',desc:'تقديم البرامج التلفزيونية.'},
-      {title:'مترجم',company:'مكتب ترجمة',salary:450,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🌍',desc:'ترجمة نصوص ووثائق.'},
-      {title:'مراقب مالي',company:'شركة محاسبة',salary:900,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'3 سنوات',img:'💰',desc:'مراقبة الحسابات والتقارير.'},
-      {title:'مسؤول مشتريات',company:'شركة استيراد',salary:600,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنة',img:'🛒',desc:'شراء وتوريد البضائع.'},
-      {title:'مندوب تحصيل',company:'شركة تمويل',salary:350,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'بدون',img:'📬',desc:'تحصيل المبالغ من العملاء.'},
-      {title:'أخصائي شبكات',company:'IT Group',salary:950,hours:8,province:'كل المحافظات',type:'دوام كامل',exp:'سنتين',img:'🌐',desc:'إدارة وصيانة الشبكات.'},
-      {title:'مدير تسويق',company:'مجموعة إعلانات',salary:1100,hours:9,province:'كل المحافظات',type:'دوام كامل',exp:'5 سنوات',img:'📢',desc:'إدارة فريق التسويق.'}
-    ];
-
-    // حالة الجلسة وصلاحيات المشرف
-    let currentUser = null;
-    let isHero = false;
-
-    // إعدادات الموقع الافتراضية
-    let defaultSiteSettings = {
-      title:"بوابة وظائف رؤيا",
-      subtitle:"كل فرص العمل المتوفرة في الأردن بين يديك — تصفح وقدم بذكاء!",
-      logo:"https://www2.0zz0.com/2025/10/15/17/197165129.png",
-      footer:"جميع الحقوق محفوظة &copy; قناة رؤيا 2025 — تصميم وتطوير: فريق رؤيا الرقمي",
-      mainColor:"#6900ad",
-      secondaryColor:"#f9d13d"
-    };
-    let siteSettings = {...defaultSiteSettings};
-
-    // تحميل الإعدادات
-    function loadSiteSettings(cb) {
-      db.ref("settings").once("value", snap=>{
-        if(snap.exists()) Object.assign(siteSettings, snap.val());
-        if(cb) cb();
+    // --- المسجلين ---
+    function loadUsers(){
+      window.onValue(window.ref(window.db, 'users/'), snap=>{
+        let users = snap.exists() ? snap.val() : {};
+        let html = `<table><thead>
+          <tr><th>الاسم</th><th>الهاتف</th><th>المحافظة</th><th>تاريخ التسجيل</th></tr></thead><tbody>`;
+        Object.values(users).reverse().forEach(u=>{
+          html += `<tr>
+            <td>${u.name}</td>
+            <td>${u.phone}</td>
+            <td>${u.gov}</td>
+            <td>${u.regTime ? new Date(u.regTime).toLocaleDateString('ar-JO') : ''}</td>
+          </tr>`;
+        });
+        html += "</tbody></table>";
+        document.getElementById("usersTab").innerHTML = html;
       });
     }
-    function saveSiteSettings() {
-      db.ref("settings").set(siteSettings, ()=>showToast("تم حفظ الإعدادات!"));
+
+    // --- الوظائف ---
+    let jobGovs = ["عمان","إربد","الزرقاء","البلقاء","المفرق","جرش","عجلون","مأدبا","الكرك","الطفيلة","معان","العقبة"];
+    function loadJobs(){
+      window.onValue(window.ref(window.db, 'jobs/'), snap=>{
+        let jobs = snap.exists() ? snap.val() : {};
+        let html = `<button class="add-btn" onclick="showAddJobForm()">إضافة وظيفة جديدة</button>
+        <div id="jobFormBox"></div>
+        <table><thead>
+          <tr><th>الوظيفة</th><th>الساعات</th><th>الراتب</th><th>المحافظة</th><th>إجراءات</th></tr></thead><tbody>`;
+        Object.entries(jobs).reverse().forEach(([key,job])=>{
+          html += `<tr>
+            <td>${job.title}</td>
+            <td>${job.hours}</td>
+            <td>${job.salary}</td>
+            <td>${job.gov}</td>
+            <td>
+              <button class="edit-btn" onclick="editJob('${key}')">تعديل</button>
+              <button class="del-btn" onclick="delJob('${key}')">حذف</button>
+            </td>
+          </tr>`;
+        });
+        html += "</tbody></table>";
+        document.getElementById("jobsTab").innerHTML = html;
+      });
     }
-    function resetSiteSettings() {
-      siteSettings = {...defaultSiteSettings};
-      saveSiteSettings();
-      showAdminPanel();
+    // إضافة وظيفة
+    window.showAddJobForm = function(){
+      let box = document.getElementById("jobFormBox");
+      box.innerHTML = `<form class="job-form" onsubmit="addJob(event)">
+        <label>اسم الوظيفة</label>
+        <input type="text" id="jobTitle" required maxlength="50"/>
+        <label>عدد الساعات</label>
+        <input type="number" id="jobHours" required min="7" max="10"/>
+        <label>الراتب</label>
+        <input type="number" id="jobSalary" required min="550" max="1200"/>
+        <label>المحافظة</label>
+        <select id="jobGov" required>${jobGovs.map(g=>`<option value="${g}">${g}</option>`).join("")}</select>
+        <button type="submit" class="save-btn">حفظ</button>
+        <button type="button" class="cancel-btn" onclick="cancelJobForm()">إلغاء</button>
+      </form>`;
+    }
+    window.cancelJobForm = function(){ document.getElementById("jobFormBox").innerHTML = ""; }
+    window.addJob = async function(e){
+      e.preventDefault();
+      let title = document.getElementById("jobTitle").value.trim();
+      let hours = +document.getElementById("jobHours").value;
+      let salary = +document.getElementById("jobSalary").value;
+      let gov = document.getElementById("jobGov").value;
+      await window.push(window.ref(window.db, 'jobs/'), {title, hours, salary, gov});
+      cancelJobForm();
+    }
+    // تعديل وظيفة
+    window.editJob = function(key){
+      window.get(window.ref(window.db, `jobs/${key}`)).then(snap=>{
+        if(snap.exists()){
+          let job = snap.val();
+          document.getElementById("jobFormBox").innerHTML = `<form class="job-form" onsubmit="saveEditJob(event,'${key}')">
+            <label>اسم الوظيفة</label>
+            <input type="text" id="jobTitle" required maxlength="50" value="${job.title}"/>
+            <label>عدد الساعات</label>
+            <input type="number" id="jobHours" required min="7" max="10" value="${job.hours}"/>
+            <label>الراتب</label>
+            <input type="number" id="jobSalary" required min="550" max="1200" value="${job.salary}"/>
+            <label>المحافظة</label>
+            <select id="jobGov" required>${jobGovs.map(g=>`<option value="${g}"${g===job.gov?' selected':''}>${g}</option>`).join("")}</select>
+            <button type="submit" class="save-btn">حفظ</button>
+            <button type="button" class="cancel-btn" onclick="cancelJobForm()">إلغاء</button>
+          </form>`;
+        }
+      });
+    }
+    window.saveEditJob = async function(e,key){
+      e.preventDefault();
+      let title = document.getElementById("jobTitle").value.trim();
+      let hours = +document.getElementById("jobHours").value;
+      let salary = +document.getElementById("jobSalary").value;
+      let gov = document.getElementById("jobGov").value;
+      await window.update(window.ref(window.db, `jobs/${key}`), {title, hours, salary, gov});
+      cancelJobForm();
+    }
+    // حذف وظيفة
+    window.delJob = async function(key){
+      if(confirm("هل أنت متأكد من حذف الوظيفة؟"))
+        await window.remove(window.ref(window.db, `jobs/${key}`));
     }
 
-    // رفع الشعار
-    document.getElementById("logo-img").onclick = function() {
-      document.getElementById("logo-upload").click();
-    };
-    document.getElementById("logo-upload").onchange = function(e){
-      let file = e.target.files[0];
-      if(!file) return;
-      let reader = new FileReader();
-      reader.onload = function(evt){
-        siteSettings.logo = evt.target.result;
-        saveSiteSettings();
-        showAdminPanel();
-      };
-      reader.readAsDataURL(file);
-    };
+    // --- العقود ---
+    function loadContracts(){
+      window.onValue(window.ref(window.db, 'contracts/'), snap=>{
+        let contracts = snap.exists() ? snap.val() : {};
+        let html = `<table><thead>
+          <tr><th>الموظف</th><th>الهاتف</th><th>الوظيفة</th><th>الساعات</th><th>الراتب</th><th>المحافظة</th><th>تاريخ العقد</th><th>العقد</th></tr></thead><tbody>`;
+        Object.values(contracts).reverse().forEach(c=>{
+          html += `<tr>
+            <td>${c.userName}</td>
+            <td>${c.userPhone}</td>
+            <td>${c.jobTitle}</td>
+            <td>${c.jobHours}</td>
+            <td>${c.jobSalary}</td>
+            <td>${c.jobGov}</td>
+            <td>${c.contractTime ? new Date(c.contractTime).toLocaleDateString('ar-JO'): ''}</td>
+            <td><button class="edit-btn" onclick="showContractImage('${encodeURIComponent(JSON.stringify(c))}')">عرض العقد</button></td>
+          </tr>`;
+        });
+        html += "</tbody></table><div id='contractImageModal' style='display:none;'></div>";
+        document.getElementById("contractsTab").innerHTML = html;
+      });
+    }
+    // عرض صورة العقد
+    window.showContractImage = function(dataStr){
+      let c = JSON.parse(decodeURIComponent(dataStr));
+      let modal = document.getElementById("contractImageModal");
+      const contractHtml = `
+        <div style="font-family: 'Cairo'; direction:rtl; background:#fff; border-radius:18px; padding:22px 18px; box-shadow:0 1px 6px #b0d4ed; max-width:430px; margin:auto; border:1px solid #b0d4ed;">
+          <div style="text-align:center;">
+            <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" style="width:80px; border-radius:10px; margin-bottom:10px" alt="شعار الموقع" />
+            <h2 style="margin:0;color:#2196f3;font-size:1.5rem">عقد توظيف رسمي</h2>
+            <div style="color:#888; font-size:0.99rem;margin-bottom:8px">رقم العقد: <b>${Math.floor(Math.random()*90000+10000)}</b></div>
+          </div>
+          <div style="margin:12px 0 5px 0; font-size:1.06rem">
+            <b>الطرف الأول (الموقع):</b> منصة الوظائف الأردنية<br>
+            <b>الطرف الثاني (الموظف):</b> ${c.userName} <br>
+            <b>رقم الهاتف:</b> ${c.userPhone}<br>
+            <b>المحافظة:</b> ${c.userGov}
+          </div>
+          <div style="margin:9px 0 5px 0; font-size:1.08rem">
+            يقر الطرفان بإبرام هذا العقد على وظيفة: <b>${c.jobTitle}</b> في محافظة <b>${c.jobGov}</b>، بمدة عمل <b>${c.jobHours}</b> ساعات يومياً، براتب شهري <b>${c.jobSalary}</b> دينار أردني.
+          </div>
+          <div style="margin:8px 0 7px 0; color:#333; font-size:0.97rem">
+            تم توقيع العقد إلكترونيًا بتاريخ: <b>${new Date(c.contractTime).toLocaleDateString('ar-JO')}</b>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px">
+            <div style="text-align:center">
+              <div style="font-size:0.95rem;color:#555;font-weight:bold">توقيع الموقع</div>
+              <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" style="width:55px;opacity:0.7" alt="ختم الموقع" />
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:0.95rem;color:#555;font-weight:bold">توقيع الموظف</div>
+              <div style="border-bottom:2px solid #2196f3; width:80px; height:22px; margin:auto; font-style:italic; font-family:'Cairo'; color:#1976d2; font-size:0.98rem">${c.userName}</div>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:15px; color:#bbb; font-size:0.9rem">
+            جميع الحقوق محفوظة &copy; منصة الوظائف الأردنية 2025
+          </div>
+        </div>
+      `;
+      modal.style.display = 'block';
+      modal.innerHTML = `<div id="contractDesign">${contractHtml}</div>
+        <button class="del-btn" onclick="document.getElementById('contractImageModal').style.display='none'">إغلاق</button>
+        <button class="save-btn" onclick="downloadContractImage()">تحميل صورة العقد</button>
+        <img id="contractImageHere" class="contract-img" style="display:none; margin-top:10px;"/>
+        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+      `;
+      setTimeout(()=>{
+        html2canvas(document.getElementById("contractDesign")).then(canvas=>{
+          document.getElementById("contractImageHere").src = canvas.toDataURL("image/png");
+          document.getElementById("contractImageHere").style.display = "block";
+        });
+      }, 350);
+    }
+    // تحميل صورة العقد
+    window.downloadContractImage = function(){
+      let img = document.getElementById("contractImageHere");
+      let link = document.createElement('a');
+      link.href = img.src;
+      link.download = "employment_contract.png";
+      link.click();
+    }
 
-    // إدارة جلسة الدخول
-    function checkAdmin() {
-      if(localStorage.getItem("ruyaJobsAdmin")==="1" && localStorage.getItem("ruyaAdminUser")) {
-        currentUser = JSON.parse(localStorage.getItem("ruyaAdminUser"));
-        isHero = (currentUser.username==="Hero"||currentUser.username==="hero");
-        showAdminPanel();
-      } else {
-        showModal("admin-modal-bg");
+    // --- إدارة المشرفين (مخفي إلا لـ Hero) ---
+    function loadSupervisorsTab(){
+      let html = `<button class="add-btn" onclick="showAddSupervisorForm()">إضافة مشرف جديد</button>
+        <div id="supervisorFormBox"></div>
+        <div class="supervisor-box"><b>المشرفون الحاليون:</b></div>
+        <table><thead>
+          <tr><th>المعرف</th><th>الاسم</th><th>كلمة المرور</th><th>إجراءات</th></tr></thead><tbody>`;
+      Object.entries(supervisors).forEach(([key,sup])=>{
+        html += `<tr>
+          <td>${key}</td>
+          <td>${sup.name}</td>
+          <td>${sup.password}</td>
+          <td>
+            ${key==="Hero"?"":`
+            <button class="edit-btn" onclick="editSupervisor('${key}')">تعديل</button>
+            <button class="del-btn" onclick="delSupervisor('${key}')">حذف</button>
+            `}
+          </td>
+        </tr>`;
+      });
+      html += "</tbody></table>";
+      document.getElementById("supervisorsTab").innerHTML = html;
+    }
+    window.showAddSupervisorForm = function(){
+      let box = document.getElementById("supervisorFormBox");
+      box.innerHTML = `<form class="job-form" onsubmit="addSupervisor(event)">
+        <label>المعرف</label>
+        <input type="text" id="supKey" required maxlength="20"/>
+        <label>الاسم</label>
+        <input type="text" id="supName" required maxlength="30"/>
+        <label>كلمة المرور</label>
+        <input type="text" id="supPass" required maxlength="30"/>
+        <button type="submit" class="save-btn">حفظ</button>
+        <button type="button" class="cancel-btn" onclick="cancelSupervisorForm()">إلغاء</button>
+      </form>`;
+    }
+    window.cancelSupervisorForm = function(){ document.getElementById("supervisorFormBox").innerHTML = ""; }
+    window.addSupervisor = async function(e){
+      e.preventDefault();
+      let key = document.getElementById("supKey").value.trim();
+      let name = document.getElementById("supName").value.trim();
+      let password = document.getElementById("supPass").value.trim();
+      supervisors[key] = {name,password};
+      await window.set(window.ref(window.db, 'supervisors/'), supervisors);
+      cancelSupervisorForm(); loadSupervisorsTab();
+    }
+    window.editSupervisor = function(key){
+      let sup = supervisors[key];
+      document.getElementById("supervisorFormBox").innerHTML = `<form class="job-form" onsubmit="saveEditSupervisor(event,'${key}')">
+        <label>الاسم</label>
+        <input type="text" id="supName" required maxlength="30" value="${sup.name}"/>
+        <label>كلمة المرور</label>
+        <input type="text" id="supPass" required maxlength="30" value="${sup.password}"/>
+        <button type="submit" class="save-btn">حفظ</button>
+        <button type="button" class="cancel-btn" onclick="cancelSupervisorForm()">إلغاء</button>
+      </form>`;
+    }
+    window.saveEditSupervisor = async function(e,key){
+      e.preventDefault();
+      supervisors[key].name = document.getElementById("supName").value.trim();
+      supervisors[key].password = document.getElementById("supPass").value.trim();
+      await window.set(window.ref(window.db, 'supervisors/'), supervisors);
+      cancelSupervisorForm(); loadSupervisorsTab();
+    }
+    window.delSupervisor = async function(key){
+      if(confirm("هل أنت متأكد من حذف المشرف؟")){
+        delete supervisors[key];
+        await window.set(window.ref(window.db, 'supervisors/'), supervisors);
+        loadSupervisorsTab();
       }
     }
 
-    document.getElementById("admin-login-btn").onclick = function() {
-      let u = document.getElementById("admin-user").value.trim();
-      let p = document.getElementById("admin-pass").value.trim();
-      db.ref("supervisors").orderByChild("username").equalTo(u).once("value", snap=>{
-        let val = snap.val();
-        if((u==="Hero" || u==="hero") && p==="Hero@282") {
-          localStorage.setItem("ruyaJobsAdmin","1");
-          localStorage.setItem("ruyaAdminUser",JSON.stringify({username:"Hero"}));
-          hideModal("admin-modal-bg");
-          currentUser = {username:"Hero"};
-          isHero = true;
-          showAdminPanel();
-        } else if(val) {
-          let entry = Object.values(val)[0];
-          if(entry && entry.password === p) {
-            localStorage.setItem("ruyaJobsAdmin","1");
-            localStorage.setItem("ruyaAdminUser",JSON.stringify({username:entry.username}));
-            hideModal("admin-modal-bg");
-            currentUser = {username:entry.username};
-            isHero = false;
-            showAdminPanel();
-          } else {
-            document.getElementById("admin-err").textContent = "كلمة المرور غير صحيحة";
-          }
-        } else {
-          document.getElementById("admin-err").textContent = "اسم المستخدم غير صحيح";
-        }
-      });
+    // --- الوظائف الجاهزة (100 وظيفة عشوائية) ---
+    async function createRandomJobsIfNotExists(){
+      let snap = await window.get(window.ref(window.db, 'jobs/'));
+      if(snap.exists() && Object.keys(snap.val()).length >= 100) return;
+      let titles = [
+        "موظف استقبال", "محاسب مالي", "سائق سيارة", "فني كهرباء", "عامل مستودع", "مطور ويب", "موظف تسويق", "باحث اجتماعي", "ممرض", "معلم لغة عربية",
+        "منسق فعاليات", "موظف خدمة عملاء", "حارس أمن", "طباخ", "نجار", "مندوب مبيعات", "محلل نظم", "مدير مشاريع", "عامل نظافة", "مهندس مدني",
+        "مهندس معماري", "رسام هندسي", "مشرف إنتاج", "فني تكييف", "فني صيانة أجهزة", "مصمم جرافيك", "مساعد إداري", "كاتب محتوى", "موظف موارد بشرية", "فني مختبر",
+        "مدخل بيانات", "مراقب جودة", "أخصائي تغذية", "مدير مالي", "بائع في متجر", "مدرب رياضي", "معلم رياضيات", "مدير تسويق", "مساعد طباخ", "سائق باص",
+        "موظف شؤون قانونية", "مصور فوتوغرافي", "مترجم", "فني اتصالات", "معلم لغة إنجليزية", "مساعد طبيب", "سكرتير", "فني كمبيوتر", "فني شبكات", "عامل بناء",
+        "مساعد ممرض", "وكيل تأمين", "منسق مبيعات", "منظم رحلات", "مسؤول مشتريات", "منسق إعلامي", "مدير مدرسة", "موظف علاقات عامة", "محاسب ضرائب", "موظف بريد",
+        "سائق شاحنة", "محاسب رواتب", "عامل مطبعة", "أمين مكتبة", "فني ميكانيك", "مراقب مخزون", "عامل تعبئة وتغليف", "فني زراعة", "مشرف صحة وسلامة", "منسق تدريب",
+        "مدير موارد بشرية", "فني صوتيات", "مدرب لغات", "منظم فعاليات", "مشرف أمن وسلامة", "أخصائي نفسي", "فني بصريات", "مدير علاقات عامة", "عامل توصيل", "مدير إنتاج",
+        "موظف استقبال مرضى", "مشرف عمال", "عامل نظافة مكتب", "مساعد مدير", "مبرمج تطبيقات", "مشرف صيانة", "كاتب تقارير", "أخصائي تسويق إلكتروني", "فني مختبر طبي", "سكرتير تنفيذي",
+        "موظف تسجيل بيانات", "منسق شحن", "منسق خدمات", "موظف دعم فني", "مسؤول أمن معلومات", "أخصائي خدمة عملاء", "مدير مبيعات", "كاتب حسابات", "عامل تغليف", "فني إنتاج"
+      ];
+      let jobs = [];
+      for(let i=0;i<100;i++){
+        let gov = jobGovs[Math.floor(Math.random()*jobGovs.length)];
+        let title = titles[i%titles.length];
+        let hours = Math.floor(Math.random()*4)+7; // من 7-10
+        let salary = Math.floor(Math.random()*651)+550; // من 550-1200
+        jobs.push({title, hours, salary, gov});
+      }
+      // أضف الوظائف دفعة واحدة
+      for(let job of jobs){
+        await window.push(window.ref(window.db, 'jobs/'), job);
+      }
     }
-
-    function logout(){
-      localStorage.removeItem("ruyaJobsAdmin");
-      localStorage.removeItem("ruyaAdminUser");
-      location.reload();
-    };
-
-    // البيانات الرئيسية
-    let jobsData = [], jobsKeys = [], allApplications = [], allUsers = [], allSupervisors = [];
-
-    function loadJobs(cb) {
-      db.ref("jobs").once("value", snap => {
-        if(snap.exists()){
-          jobsData = Object.values(snap.val());
-          jobsKeys = Object.keys(snap.val());
-        } else {
-          jobsData = [];
-          jobsKeys = [];
-        }
-        if(cb) cb();
-      });
-    }
-    function loadAllData(cb){
-      db.ref("applications").once("value", snap=>{
-        allApplications = snap.exists()?Object.entries(snap.val()).map(([k,v])=>({...v,key:k})): [];
-        db.ref("users").once("value", snap2=>{
-          allUsers = snap2.exists()?Object.values(snap2.val()):[];
-          db.ref("supervisors").once("value", snap3=>{
-            allSupervisors = snap3.exists()?Object.entries(snap3.val()).map(([k,v])=>({...v,key:k})): [];
-            if(cb) cb();
-          });
-        });
-      });
-    }
-
-    // لوحة الإدارة الرئيسية
-    function showAdminPanel() {
-      loadJobs(()=>loadAllData(()=>loadSiteSettings(()=>{
-        let adminHtml = "";
-
-        // قسم الإعدادات
-        adminHtml += `
-        <div class="card" style="flex:2.2;">
-          <div class="card-title"><span>⚙️</span> إعدادات الموقع</div>
-          <div style="margin-bottom:12px;">
-            <img class="logo-preview" src="${siteSettings.logo||defaultSiteSettings.logo}" alt="شعار الموقع" title="تغيير الشعار" id="logo-img-preview"/>
-          </div>
-          <form class="site-settings" onsubmit="return false;">
-            <div class="row"><label>العنوان الرئيسي:</label><input id="site-title" type="text" value="${siteSettings.title||''}"></div>
-            <div class="row"><label>الوصف الفرعي:</label><input id="site-subtitle" type="text" value="${siteSettings.subtitle||''}"></div>
-            <div class="row"><label>الرسالة السفلية:</label><input id="site-footer" type="text" value="${siteSettings.footer||''}"></div>
-            <div class="row"><label>لون رئيسي:</label><input id="main-color" type="color" value="${siteSettings.mainColor||'#6900ad'}"></div>
-            <div class="row"><label>لون ثانوي:</label><input id="secondary-color" type="color" value="${siteSettings.secondaryColor||'#f9d13d'}"></div>
-          </form>
-          <button class="admin-btn" onclick="saveSettingsFields()">حفظ الإعدادات</button>
-          <button class="admin-btn reset" onclick="resetSiteSettings()">إعادة تعيين</button>
-        </div>
-        `;
-
-        // شريط الإحصائيات
-        adminHtml += `
-        <div class="card" style="flex:1.2;">
-          <div class="card-title"><span>📊</span> إحصائيات</div>
-          <div class="stats-bar">
-            <div class="stat"><span>🗂️</span> وظائف: ${jobsData.length}</div>
-            <div class="stat"><span>📋</span> الطلبات: ${allApplications.length}</div>
-            <div class="stat"><span>👤</span> مستخدمين: ${allUsers.length}</div>
-            <div class="stat"><span>🛡️</span> مشرفين: ${allSupervisors.length+1}</div>
-          </div>
-          <button onclick="logout()" class="logout-btn">تسجيل خروج</button>
-        </div>
-        `;
-
-        // إدارة المشرفين (Hero فقط)
-        if(isHero){
-        adminHtml += `
-        <div class="card" style="flex:1.1;">
-          <div class="card-title"><span>🛡️</span> إدارة المشرفين</div>
-          <form id="add-supervisor-form" style="margin-bottom:9px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;" onsubmit="return false;">
-            <input id="supervisor-username" placeholder="اسم المستخدم" required style="width:120px;">
-            <input id="supervisor-password" placeholder="كلمة المرور" required type="password" style="width:120px;">
-            <button class="admin-btn" type="submit">إضافة مشرف</button>
-          </form>
-          <table class="supervisors-table">
-            <tr><th>اسم المشرف</th><th>حذف</th></tr>
-            <tr><td><b>Hero</b> (رئيسي)</td><td>---</td></tr>
-            ${allSupervisors.map(s=>`<tr><td>${s.username}</td><td><button class="admin-btn danger" onclick="deleteSupervisor('${s.key}')">حذف</button></td></tr>`).join("")}
-          </table>
-        </div>
-        `;
-        }
-
-        // قسم إضافة وظيفة جديدة
-        adminHtml += `
-        <div class="card" style="flex:1.7;">
-          <div class="card-title"><span>➕</span> إضافة وظيفة جديدة</div>
-          <form class="admin-add-job" id="add-job-form" onsubmit="return false;" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
-            <input id="job-title" placeholder="اسم الوظيفة" required style="width:140px;">
-            <input id="job-company" placeholder="الشركة" required style="width:110px;">
-            <input id="job-salary" type="number" placeholder="الراتب" required style="width:75px;">
-            <input id="job-hours" type="number" placeholder="عدد الساعات" required style="width:60px;">
-            <select id="job-province" required style="width:115px;">
-              <option value="">المحافظة</option>
-              <option>عمان</option><option>إربد</option><option>الزرقاء</option><option>العقبة</option>
-              <option>المفرق</option><option>السلط</option><option>جرش</option>
-              <option>عجلون</option><option>مأدبا</option><option>الكرك</option>
-              <option>الطفيلة</option><option>معان</option>
-              <option>كل المحافظات</option>
-            </select>
-            <select id="job-type" required style="width:110px;">
-              <option value="">نوع الدوام</option>
-              <option>دوام كامل</option>
-              <option>دوام جزئي</option>
-              <option>عقد مؤقت</option>
-              <option>عمل عن بعد</option>
-            </select>
-            <input id="job-exp" placeholder="الخبرة" required style="width:90px;">
-            <input id="job-img" placeholder="رمز/إيموجي" maxlength="2" style="width:50px;">
-            <input id="job-desc" placeholder="وصف الوظيفة" required style="width:170px;">
-            <input type="file" id="job-imgupload" style="width:140px;" accept="image/*">
-            <button class="admin-btn" type="submit">إضافة</button>
-          </form>
-          <button class="admin-btn light" onclick="showModal('readyjob-modal-bg')">إضافة وظيفة جاهزة</button>
-          <div id="add-job-err" class="err"></div>
-        </div>
-        `;
-
-        // كل الوظائف (جداول وبطاقات مع بحث وأكشن)
-        adminHtml += `
-        <div class="card" style="flex:2.2;">
-          <div class="card-title"><span>🗂️</span> جميع الوظائف</div>
-          <input class="search-box" id="job-search" placeholder="بحث بالوظيفة/الشركة..." oninput="renderJobsTable(this.value)">
-          <div id="jobs-table-wrapper"></div>
-        </div>
-        `;
-
-        // إدارة المستخدمين
-        adminHtml += `
-        <div class="card" style="flex:2.2;">
-          <div class="card-title"><span>👤</span> المستخدمون</div>
-          <input class="search-box" id="user-search" placeholder="بحث بالاسم/الهاتف..." oninput="renderUsersTable(this.value)">
-          <div id="users-table-wrapper"></div>
-        </div>
-        `;
-
-        // تفاصيل الطلبات في نافذة منبثقة عند الحاجة
-        adminHtml += `<div id="job-apps-list"></div>`;
-
-        document.getElementById("admin-wrapper").innerHTML = adminHtml;
-
-        // إعدادات النصوص والألوان
-        window.saveSettingsFields = function(){
-          siteSettings.title = document.getElementById("site-title").value;
-          siteSettings.subtitle = document.getElementById("site-subtitle").value;
-          siteSettings.footer = document.getElementById("site-footer").value;
-          siteSettings.mainColor = document.getElementById("main-color").value;
-          siteSettings.secondaryColor = document.getElementById("secondary-color").value;
-          saveSiteSettings();
-          showAdminPanel();
-        };
-
-        // شعار الموقع
-        document.getElementById("logo-img-preview").onclick = function() {
-          document.getElementById("logo-upload").click();
-        };
-
-        // إضافة مشرف جديد
-        if(isHero){
-        document.getElementById("add-supervisor-form").onsubmit = function() {
-          let username = document.getElementById("supervisor-username").value.trim();
-          let password = document.getElementById("supervisor-password").value.trim();
-          if(!username || !password) return false;
-          db.ref("supervisors").push({username,password},()=>{showToast("تمت إضافة المشرف!");showAdminPanel();});
-          return false;
-        };
-        window.deleteSupervisor = function(key){
-          if(!confirm("هل أنت متأكد من حذف المشرف؟"))return;
-          db.ref("supervisors/"+key).remove(()=>{showToast("تم حذف المشرف!");showAdminPanel();});
-        };
-        }
-
-        // إضافة وظيفة جديدة
-        let newImgUrl = "";
-        document.getElementById("job-imgupload").onchange = function(e){
-          let file = e.target.files[0];
-          if(!file) return;
-          let reader = new FileReader();
-          reader.onload = function(evt){
-            newImgUrl = evt.target.result;
-          };
-          reader.readAsDataURL(file);
-        };
-        document.getElementById("add-job-form").onsubmit=function(){
-          let n = {
-            id: Date.now(),
-            title:document.getElementById("job-title").value,
-            company:document.getElementById("job-company").value,
-            salary:+document.getElementById("job-salary").value,
-            hours:+document.getElementById("job-hours").value,
-            province:document.getElementById("job-province").value,
-            type:document.getElementById("job-type").value,
-            exp:document.getElementById("job-exp").value,
-            img:document.getElementById("job-img").value,
-            desc:document.getElementById("job-desc").value,
-          };
-          if(newImgUrl) n.imgUrl = newImgUrl;
-          db.ref("jobs").push(n,()=>{showToast("تمت إضافة الوظيفة!");showAdminPanel();});
-          newImgUrl = "";
-          return false;
-        }
-
-        // إضافة وظيفة جاهزة (عند النقر على الزر)
-        let readyList = document.getElementById("ready-job-list");
-        readyList.innerHTML = readyJobs.map((j,i)=>`<option value="${i}">${j.title} - ${j.company}</option>`).join("");
-        document.getElementById("add-ready-job-btn").onclick = function(){
-          let idx = readyList.value;
-          if(idx==="") {document.getElementById("readyjob-err").innerText="يرجى اختيار وظيفة";return;}
-          let job = {...readyJobs[+idx]};
-          job.id = Date.now();
-          job.province = "كل المحافظات";
-          db.ref("jobs").push(job,()=>{showToast("تمت إضافة الوظيفة الجاهزة!");hideModal("readyjob-modal-bg");showAdminPanel();});
-        };
-
-        // جدول الوظائف التفاعلي
-        window.renderJobsTable = function(filter=""){
-          let jobs = jobsData;
-          if(filter && filter.trim()!=="") jobs = jobs.filter(j => (j.title+j.desc+j.company+j.province+j.type).includes(filter));
-          let html = `<table class="jobs-table"><tr>
-            <th>#</th><th>الوظيفة</th><th>الشركة</th><th>المحافظة</th><th>الراتب</th>
-            <th>طلبات</th><th>حذف</th></tr>`;
-          jobs.forEach((j,i)=>{
-            let jobApps = allApplications.filter(a=>a.jobId==j.id);
-            html+=`<tr>
-              <td>${i+1}</td>
-              <td>${j.title}</td>
-              <td>${j.company}</td>
-              <td>${j.province}</td>
-              <td>${j.salary}</td>
-              <td><button class="admin-btn" onclick="showJobAppsById(${j.id})">${jobApps.length}</button></td>
-              <td><button class="admin-btn danger" onclick="deleteJobById(${j.id})">حذف</button></td>
-            </tr>`;
-          });
-          html+=`</table>`;
-          document.getElementById("jobs-table-wrapper").innerHTML = html;
-        };
-        renderJobsTable();
-
-        // جدول المستخدمين التفاعلي
-        window.renderUsersTable = function(filter=""){
-          let users = allUsers;
-          if(filter && filter.trim()!=="") users = users.filter(u => (u.name+u.phone+u.province).includes(filter));
-          let html = `<table class="users-table"><tr><th>#</th><th>الاسم</th><th>الهاتف</th><th>المحافظة</th><th>تاريخ التسجيل</th><th>حذف</th></tr>`;
-          users.forEach((u,i)=>{
-            html+=`<tr>
-              <td>${i+1}</td>
-              <td>${u.name}</td>
-              <td>${u.phone}</td>
-              <td>${u.province}</td>
-              <td>${u.timestamp?new Date(u.timestamp).toLocaleString("ar-EG"):"--"}</td>
-              <td><button class="admin-btn danger" onclick="deleteUser('${u.phone}')">حذف</button></td>
-            </tr>`;
-          });
-          html+=`</table>`;
-          document.getElementById("users-table-wrapper").innerHTML = html;
-        };
-        renderUsersTable();
-
-        // أكشن الطلبات لكل وظيفة
-        window.showJobAppsById=function(jobId){
-          let job=jobsData.find(j=>j.id==jobId);
-          let jobApps=allApplications.filter(a=>a.jobId==jobId);
-          let html2=`<div class="modal-bg" id="apps-modal-bg" style="display:flex;"><div class="modal" style="width:95vw;max-width:650px;">
-            <span class="close-x" onclick="document.getElementById('apps-modal-bg').remove()">&times;</span>
-            <h3>طلبات وظيفة: <span style="color:#6900ad;">${job.title}</span></h3>`;
-          if(!jobApps.length) html2+="<div>لا يوجد طلبات.</div>";
-          else jobApps.forEach(a=>{
-            html2+=`<div style="border-bottom:1px solid #ddd;margin-bottom:6px;">
-              <b>${a.name}</b> - ${a.phone} (${a.province})<br>
-              <span>${a.email||"--"}</span>
-              <div>تاريخ التقديم: ${a.timestamp?new Date(a.timestamp).toLocaleString("ar-EG"):"--"}</div>
-              <span class="status-badge ${a.status||'pending'}">${a.status=="pending"?"بانتظار الموافقة":a.status=="approved"?"مقبول":"مرفوض"}</span>
-              ${a.status=="pending"?`
-                <button class="admin-btn" onclick="approveApp('${a.key}')">قبول</button>
-                <button class="admin-btn danger" onclick="rejectAppPrompt('${a.key}')">رفض</button>
-              `:""}
-              <button class="admin-btn danger" onclick="deleteApp('${a.key}')">حذف الطلب</button>
-              ${a.status=="rejected"&&a.adminMsg?`<div style="color:#b30000;">سبب الرفض: ${a.adminMsg}</div>`:""}
-            </div>`;
-          });
-          html2+=`</div></div>`;
-          document.getElementById("job-apps-list").innerHTML = html2;
-        };
-        window.approveApp = function(key){
-          db.ref("applications/"+key+"/status").set("approved",()=>{showToast("تم قبول الطلب!");showAdminPanel();});
-        };
-        window.rejectAppPrompt = function(key){
-          let reason = prompt("يرجى كتابة سبب الرفض:");
-          if(reason===null) return;
-          db.ref("applications/"+key).update({status:"rejected",adminMsg:reason||""},()=>{showToast("تم رفض الطلب!");showAdminPanel();});
-        };
-        window.deleteApp=function(key){
-          if(!confirm("هل أنت متأكد من حذف الطلب؟"))return;
-          db.ref("applications/"+key).remove(()=>{showToast("تم حذف الطلب!");showAdminPanel();});
-        }
-
-        // حذف وظيفة
-        window.deleteJobById=function(jobId){
-          if(!confirm("هل أنت متأكد من حذف الوظيفة؟"))return;
-          let idx = jobsData.findIndex(j=>j.id==jobId);
-          let key=jobsKeys[idx];
-          db.ref("jobs/"+key).remove(()=>{showToast("تم حذف الوظيفة!");showAdminPanel();});
-        };
-
-        // حذف مستخدم
-        window.deleteUser = function(phone){
-          if(!confirm("هل أنت متأكد من حذف المستخدم؟"))return;
-          db.ref("users/"+phone).remove(()=>{showToast("تم حذف المستخدم!");showAdminPanel();});
-        }
-
-      })));
-    }
-    // إغلاق تسجيل الدخول بالنقر خارج النافذة
-    document.getElementById("admin-modal-bg").onclick=function(e){
-      if(e.target===this) hideModal("admin-modal-bg");
-    }
-    window.onload = checkAdmin;
+    createRandomJobsIfNotExists();
 
   </script>
 </body>
