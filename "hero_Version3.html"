@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>لوحة تحكم إدارة وظائف رؤيا</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css?family=Tajawal:400,700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Tajawal', Arial, sans-serif; background: #f8fafc; margin: 0; padding: 0; color: #222; min-height: 100vh; }
+    body.dark { background: #241740; color:#fff; }
+    header { background: #6900ad; color: #fff; padding: 20px 0 10px 0; text-align: center; box-shadow: 0 3px 16px #865fc44d; }
+    .logo { height: 62px; margin-bottom: 6px; }
+    .admin-panel {max-width:980px;margin:30px auto 0 auto;padding:18px 14px;background:#fff;border-radius:18px;box-shadow:0 4px 24px #865fc417;}
+    .admin-panel h2 {color:#6900ad;}
+    .admin-table {width:100%;border-collapse:collapse;margin: 14px 0;}
+    .admin-table th,.admin-table td {border:1px solid #d6c6ed;padding:6px 8px;}
+    .admin-table th {background:#efecfa;}
+    .admin-table tr:nth-child(even) td {background:#f7f2ff;}
+    .admin-btn {background:#6900ad;color:#fff;border:none;border-radius:7px;padding:4px 13px;cursor:pointer;}
+    .admin-btn.danger {background:#b30000;}
+    .admin-add-job {display:flex;gap:6px;flex-wrap:wrap;margin:12px 0;}
+    .admin-add-job input,.admin-add-job select {padding:6px 8px;border-radius:7px;border:1px solid #cbb7eb;}
+    .admin-add-job button {min-width:110px;}
+    #toast { min-width:200px;position:fixed;bottom:40px;left:40px;z-index:10000;background:#6900ad;color:#fff; padding:14px 30px;border-radius:12px;display:none;font-size:1.08rem; }
+    .logout-btn {background:#f9d13d;color:#6900ad;font-weight:700;border:none;border-radius:8px;padding:7px 22px;margin-top:18px;cursor:pointer;}
+    .logo-preview {width:80px;max-height:80px;object-fit:contain;display:block;margin:7px auto;}
+    .settings-section {background:#f7f2ff;padding:13px 14px 9px 14px;border-radius:10px;margin-bottom:14px;}
+    .supervisor-table {margin-top:10px;width:100%;}
+    .supervisor-table th,.supervisor-table td {border:1px solid #d6c6ed;padding:5px 7px;}
+    .supervisor-table th {background:#eee;}
+    .status-badge {font-weight:700;font-size:1.01rem;padding:2px 8px;border-radius:8px;}
+    .status-badge.pending {background:#fff5d6;color:#ad6c00;}
+    .status-badge.approved {background:#e0ffd9;color:#127c01;}
+    .status-badge.rejected {background:#ffd8d6;color:#b30000;}
+    @media (max-width: 700px) {
+      .admin-panel {padding:8px 2vw;}
+      header { font-size: 1rem;}
+      .logo-preview {width:52px;max-height:52px;}
+    }
+  </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+  <header>
+    <img class="logo" id="logo-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/ROYA_TV_LOGO.svg/512px-ROYA_TV_LOGO.svg.png" alt="شعار رؤيا"/>
+    <h2>لوحة تحكم إدارة وظائف رؤيا</h2>
+  </header>
+  <div class="admin-panel" id="admin-panel"></div>
+  <div id="toast"></div>
+  <!-- تسجيل دخول الإداري -->
+  <div class="modal-bg" id="admin-modal-bg" style="display:none;position:fixed;inset:0;background:#0008;z-index:10000;align-items:center;justify-content:center;">
+    <div class="modal" id="admin-modal" style="background:#fff;border-radius:18px;max-width:98vw;width:380px;box-shadow:0 4px 32px #6900ad3a;padding:38px 20px 28px 20px;text-align:center;">
+      <h2>دخول لوحة الإدارة</h2>
+      <input type="text" id="admin-user" placeholder="اسم المستخدم الإداري" />
+      <input type="password" id="admin-pass" placeholder="كلمة المرور" />
+      <button id="admin-login-btn">دخول</button>
+      <div id="admin-err" style="color:#b30000;font-size:.99rem;margin-top:8px;min-height:24px;"></div>
+    </div>
+  </div>
+  <input type="file" id="logo-upload" style="display:none" accept="image/*">
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC8Gx2IJRDTMzR42_kbv_tuT9i11-KRzk",
+      authDomain: "royajobs.firebaseapp.com",
+      databaseURL: "https://royajobs-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "royajobs",
+      storageBucket: "royajobs.firebasestorage.app",
+      messagingSenderId: "914105960159",
+      appId: "1:914105960159:web:d5f17f3edc5e26a5b58b6a",
+      measurementId: "G-N7C9WJZBD8"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // إدارة جلسة الدخول
+    function checkAdmin() {
+      if(localStorage.getItem("ruyaJobsAdmin")==="1") {
+        showAdminPanel();
+      } else {
+        document.getElementById("admin-modal-bg").style.display="flex";
+      }
+    }
+    // تسجيل الدخول الإداري
+    document.getElementById("admin-login-btn").onclick = function() {
+      let u = document.getElementById("admin-user").value.trim();
+      let p = document.getElementById("admin-pass").value.trim();
+      db.ref("supervisors").orderByChild("username").equalTo(u).once("value", snap=>{
+        let val = snap.val();
+        // الحساب الرئيسي الافتراضي
+        if((u==="Hero" || u==="hero") && p==="Hero@282") {
+          localStorage.setItem("ruyaJobsAdmin","1");
+          document.getElementById("admin-modal-bg").style.display="none";
+          showAdminPanel();
+        } else if(val) {
+          let entry = Object.values(val)[0];
+          if(entry && entry.password === p) {
+            localStorage.setItem("ruyaJobsAdmin","1");
+            document.getElementById("admin-modal-bg").style.display="none";
+            showAdminPanel();
+          } else {
+            document.getElementById("admin-err").textContent = "كلمة المرور غير صحيحة";
+          }
+        } else {
+          document.getElementById("admin-err").textContent = "اسم المستخدم غير صحيح";
+        }
+      });
+    }
+    window.logout = function(){
+      localStorage.removeItem("ruyaJobsAdmin");
+      location.reload();
+    };
+    window.showToast = function(msg, duration=2500) {
+      let toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "block";
+      setTimeout(()=>{toast.style.display="none";}, duration);
+    }
+    // الوظائف والطلبات والمستخدمين والمشرفين
+    let jobsData = [], jobsKeys = [], allApplications = [], allUsers = [], allSupervisors = [];
+    function loadJobs(cb) {
+      db.ref("jobs").once("value", snap => {
+        if(snap.exists()){
+          jobsData = Object.values(snap.val());
+          jobsKeys = Object.keys(snap.val());
+        } else {
+          jobsData = [];
+          jobsKeys = [];
+        }
+        if(cb) cb();
+      });
+    }
+    function loadAllData(cb){
+      db.ref("applications").once("value", snap=>{
+        allApplications = snap.exists()?Object.entries(snap.val()).map(([k,v])=>({...v,key:k})): [];
+        db.ref("users").once("value", snap2=>{
+          allUsers = snap2.exists()?Object.values(snap2.val()):[];
+          db.ref("supervisors").once("value", snap3=>{
+            allSupervisors = snap3.exists()?Object.entries(snap3.val()).map(([k,v])=>({...v,key:k})): [];
+            if(cb) cb();
+          });
+        });
+      });
+    }
+    // تحميل الإعدادات
+    let siteSettings = {title:"بوابة وظائف رؤيا",subtitle:"كل فرص العمل المتوفرة في الأردن بين يديك — تصفح وقدم بذكاء!",logo:"",footer:"جميع الحقوق محفوظة &copy; قناة رؤيا 2025 — تصميم وتطوير: فريق رؤيا الرقمي"};
+    function loadSiteSettings(cb) {
+      db.ref("settings").once("value", snap=>{
+        if(snap.exists()) Object.assign(siteSettings, snap.val());
+        if(cb) cb();
+      });
+    }
+    function saveSiteSettings() {
+      db.ref("settings").set(siteSettings, ()=>showToast("تم حفظ الإعدادات!"));
+    }
+    // رفع الشعار
+    document.getElementById("logo-img").onclick = function() {
+      document.getElementById("logo-upload").click();
+    };
+    document.getElementById("logo-upload").onchange = function(e){
+      let file = e.target.files[0];
+      if(!file) return;
+      let reader = new FileReader();
+      reader.onload = function(evt){
+        siteSettings.logo = evt.target.result;
+        saveSiteSettings();
+        showAdminPanel();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    // لوحة الإدارة
+    function showAdminPanel() {
+      loadJobs(()=>loadAllData(()=>loadSiteSettings(()=>{
+      let html = `
+      <div style="margin-bottom:6px;">
+        <img class="logo-preview" src="${siteSettings.logo||'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/ROYA_TV_LOGO.svg/512px-ROYA_TV_LOGO.svg.png'}" alt="شعار الموقع" title="تغيير الشعار" style="cursor:pointer;" id="logo-img-preview"/>
+      </div>
+      <div class="settings-section">
+        <b>العنوان الرئيسي:</b> <input id="site-title" value="${siteSettings.title||''}" style="width:220px;margin-bottom:4px;">
+        <br><b>الوصف الفرعي:</b> <input id="site-subtitle" value="${siteSettings.subtitle||''}" style="width:320px;margin-bottom:4px;">
+        <br><b>الرسالة السفلية (footer):</b> <input id="site-footer" value="${siteSettings.footer||''}" style="width:350px;margin-bottom:4px;">
+        <button class="admin-btn" onclick="saveSettingsFields()" style="margin-right:10px;">حفظ النصوص</button>
+      </div>
+      <div style="margin-bottom:18px;font-size:1.15rem;">
+        <b>عدد الوظائف:</b> ${jobsData.length} |
+        <b>عدد الطلبات:</b> ${allApplications.length} |
+        <b>عدد المستخدمين:</b> ${allUsers.length} |
+        <b>عدد المشرفين:</b> ${allSupervisors.length+1}
+        <button onclick="logout()" class="logout-btn" style="float:left;">تسجيل خروج</button>
+      </div>
+      <details open style="margin-bottom:18px;"><summary style="font-weight:700;font-size:1.07rem;cursor:pointer;">إدارة المشرفين ⬇️</summary>
+        <form id="add-supervisor-form" style="margin:7px 0;display:flex;gap:7px;flex-wrap:wrap;" onsubmit="return false;">
+          <input id="supervisor-username" placeholder="اسم المستخدم" required>
+          <input id="supervisor-password" placeholder="كلمة المرور" required type="password">
+          <button class="admin-btn" type="submit">إضافة مشرف</button>
+        </form>
+        <table class="supervisor-table">
+          <tr><th>اسم المشرف</th><th>حذف</th></tr>
+          <tr><td><b>Hero</b> (رئيسي)</td><td>---</td></tr>
+          ${allSupervisors.map(s=>`<tr><td>${s.username}</td><td><button class="admin-btn danger" onclick="deleteSupervisor('${s.key}')">حذف</button></td></tr>`).join("")}
+        </table>
+      </details>
+      <h3>إضافة وظيفة جديدة</h3>
+      <form class="admin-add-job" id="add-job-form" onsubmit="return false;">
+        <input id="job-title" placeholder="اسم الوظيفة" required>
+        <input id="job-company" placeholder="الشركة" required>
+        <input id="job-salary" type="number" placeholder="الراتب" required style="width:80px;">
+        <input id="job-hours" type="number" placeholder="عدد الساعات" required style="width:60px;">
+        <select id="job-province" required>
+          <option value="">المحافظة</option>
+          <option>عمان</option><option>إربد</option><option>الزرقاء</option><option>العقبة</option>
+          <option>المفرق</option><option>السلط</option><option>جرش</option>
+          <option>عجلون</option><option>مأدبا</option><option>الكرك</option>
+          <option>الطفيلة</option><option>معان</option>
+        </select>
+        <select id="job-type" required>
+          <option value="">نوع الدوام</option>
+          <option>دوام كامل</option>
+          <option>دوام جزئي</option>
+          <option>عقد مؤقت</option>
+          <option>عمل عن بعد</option>
+        </select>
+        <input id="job-exp" placeholder="الخبرة" required>
+        <input id="job-img" placeholder="رمز/إيموجي" maxlength="2" style="width:45px;">
+        <input id="job-desc" placeholder="وصف الوظيفة" required style="width:180px;">
+        <input type="file" id="job-imgupload" style="width:160px;" accept="image/*">
+        <button class="admin-btn" type="submit">إضافة</button>
+      </form>
+      <div id="add-job-err" style="color:#b30000;"></div>
+      <h3>كل الوظائف</h3>
+      <table class="admin-table"><tr>
+        <th>#</th><th>الوظيفة</th><th>الشركة</th><th>المحافظة</th><th>الراتب</th>
+        <th>طلبات</th><th>حذف</th></tr>`;
+      jobsData.forEach((j,i)=>{
+        let jobApps = allApplications.filter(a=>a.jobId==j.id);
+        html+=`<tr>
+          <td>${i+1}</td>
+          <td>${j.title}</td>
+          <td>${j.company}</td>
+          <td>${j.province}</td>
+          <td>${j.salary}</td>
+          <td><button class="admin-btn" onclick="showJobApps(${i})">${jobApps.length}</button></td>
+          <td><button class="admin-btn danger" onclick="deleteJob(${i})">حذف</button></td>
+        </tr>`;
+      });
+      html+=`</table>
+      <div id="job-apps-list"></div>
+      <h3>إدارة المستخدمين</h3>
+      <table class="admin-table" style="font-size:.98rem;"><tr><th>#</th><th>الاسم</th><th>الهاتف</th><th>المحافظة</th><th>العنوان</th><th>تاريخ التسجيل</th><th>حذف</th></tr>`;
+      allUsers.forEach((u,i)=>{
+        html+=`<tr>
+          <td>${i+1}</td>
+          <td>${u.name}</td>
+          <td>${u.phone}</td>
+          <td>${u.province}</td>
+          <td>${u.address||"--"}</td>
+          <td>${u.timestamp?new Date(u.timestamp).toLocaleString("ar-EG"):"--"}</td>
+          <td><button class="admin-btn danger" onclick="deleteUser('${u.phone}')">حذف</button></td>
+        </tr>`;
+      });
+      html+=`</table>
+      `;
+      document.getElementById("admin-panel").innerHTML = html;
+      // إعدادات النصوص
+      window.saveSettingsFields = function(){
+        siteSettings.title = document.getElementById("site-title").value;
+        siteSettings.subtitle = document.getElementById("site-subtitle").value;
+        siteSettings.footer = document.getElementById("site-footer").value;
+        saveSiteSettings();
+        showAdminPanel();
+      };
+      // شعار الموقع
+      document.getElementById("logo-img-preview").onclick = function() {
+        document.getElementById("logo-upload").click();
+      };
+      // إضافة مشرف جديد
+      document.getElementById("add-supervisor-form").onsubmit = function() {
+        let username = document.getElementById("supervisor-username").value.trim();
+        let password = document.getElementById("supervisor-password").value.trim();
+        if(!username || !password) return false;
+        db.ref("supervisors").push({username,password},()=>{showToast("تمت إضافة المشرف!");showAdminPanel();});
+        return false;
+      };
+      window.deleteSupervisor = function(key){
+        if(!confirm("هل أنت متأكد من حذف المشرف؟"))return;
+        db.ref("supervisors/"+key).remove(()=>{showToast("تم حذف المشرف!");showAdminPanel();});
+      };
+      // إضافة وظيفة
+      let newImgUrl = "";
+      document.getElementById("job-imgupload").onchange = function(e){
+        let file = e.target.files[0];
+        if(!file) return;
+        let reader = new FileReader();
+        reader.onload = function(evt){
+          newImgUrl = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      };
+      document.getElementById("add-job-form").onsubmit=function(){
+        let n = {
+          id: Date.now(),
+          title:document.getElementById("job-title").value,
+          company:document.getElementById("job-company").value,
+          salary:+document.getElementById("job-salary").value,
+          hours:+document.getElementById("job-hours").value,
+          province:document.getElementById("job-province").value,
+          type:document.getElementById("job-type").value,
+          exp:document.getElementById("job-exp").value,
+          img:document.getElementById("job-img").value,
+          desc:document.getElementById("job-desc").value,
+        };
+        if(newImgUrl) n.imgUrl = newImgUrl;
+        db.ref("jobs").push(n,()=>{showToast("تمت إضافة الوظيفة!");showAdminPanel();});
+        newImgUrl = "";
+        return false;
+      }
+      // عرض الطلبات لكل وظيفة
+      window.showJobApps=function(idx){
+        let job=jobsData[idx];
+        let jobApps=allApplications.filter(a=>a.jobId==job.id);
+        let html2=`<h4>طلبات وظيفة ${job.title}</h4>`;
+        if(!jobApps.length) html2+="<div>لا يوجد طلبات.</div>";
+        else jobApps.forEach(a=>{
+          html2+=`<div style="border-bottom:1px solid #ddd;margin-bottom:6px;">
+            <b>${a.name}</b> - ${a.phone} (${a.province})<br>
+            <span>${a.email||"--"}</span>
+            <div>تاريخ التقديم: ${a.timestamp?new Date(a.timestamp).toLocaleString("ar-EG"):"--"}</div>
+            <span class="status-badge ${a.status||'pending'}">${a.status=="pending"?"بانتظار الموافقة":a.status=="approved"?"مقبول":"مرفوض"}</span>
+            ${a.status=="pending"?`
+              <button class="admin-btn" onclick="approveApp('${a.key}')">قبول</button>
+              <button class="admin-btn danger" onclick="rejectAppPrompt('${a.key}')">رفض</button>
+            `:""}
+            <button class="admin-btn danger" onclick="deleteApp('${a.key}')">حذف الطلب</button>
+            ${a.status=="rejected"&&a.adminMsg?`<div style="color:#b30000;">سبب الرفض: ${a.adminMsg}</div>`:""}
+          </div>`;
+        });
+        document.getElementById("job-apps-list").innerHTML=html2;
+      }
+      window.approveApp = function(key){
+        db.ref("applications/"+key+"/status").set("approved",()=>{showToast("تم قبول الطلب!");showAdminPanel();});
+      };
+      window.rejectAppPrompt = function(key){
+        let reason = prompt("يرجى كتابة سبب الرفض:");
+        if(reason===null) return;
+        db.ref("applications/"+key).update({status:"rejected",adminMsg:reason||""},()=>{showToast("تم رفض الطلب!");showAdminPanel();});
+      };
+      window.deleteApp=function(key){
+        if(!confirm("هل أنت متأكد من حذف الطلب؟"))return;
+        db.ref("applications/"+key).remove(()=>{showToast("تم حذف الطلب!");showAdminPanel();});
+      }
+      // حذف وظيفة
+      window.deleteJob=function(idx){
+        if(!confirm("هل أنت متأكد من حذف الوظيفة؟"))return;
+        let key=jobsKeys[idx];
+        db.ref("jobs/"+key).remove(()=>{showToast("تم حذف الوظيفة!");showAdminPanel();});
+      }
+      // حذف مستخدم
+      window.deleteUser = function(phone){
+        if(!confirm("هل أنت متأكد من حذف المستخدم؟"))return;
+        db.ref("users/"+phone).remove(()=>{showToast("تم حذف المستخدم!");showAdminPanel();});
+      }
+    })));
+    }
+    // إغلاق تسجيل الدخول بالنقر خارج النافذة
+    document.getElementById("admin-modal-bg").onclick=function(e){
+      if(e.target===this) this.style.display="none";
+    }
+    window.onload = checkAdmin;
+  </script>
+</body>
+</html>
