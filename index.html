@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css?family=Tajawal:400,700&display=swap" rel="stylesheet">
   <link rel="icon" href="https://www2.0zz0.com/2025/10/15/17/197165129.png">
   <style>
+    /* ... جميع CSS الأصلي + تحسينات ... */
     body {
       font-family: 'Tajawal', Arial, sans-serif;
       background: linear-gradient(135deg, #e8eafc 0%, #e4ecf7 100%);
@@ -111,6 +112,17 @@
       border-radius:12px;padding:10px 35px;font-weight:700;font-size:1.13rem;cursor:pointer;transition:background .14s;
     }
     .follow-btn:active {transform:scale(.97);}
+    .download-contract-btn {
+      background: linear-gradient(90deg, #127c01 0%, #6900ad 100%);
+      color: #fff; border: none; border-radius: 10px; padding: 11px 0;
+      font-size: 1.1rem; font-weight: 700; cursor: pointer; width: 100%;
+      margin-top: 10px; transition:background .15s;
+      box-shadow: 0 2px 12px #127c0140;
+    }
+    .download-contract-btn:active {transform:scale(.97);}
+    /* شريط التقدم */
+    .progress-bar {width:90%;background:#f1e7ff;height:12px;border-radius:7px;overflow:hidden;margin:16px auto;}
+    .progress-bar-inner {height:100%;background:linear-gradient(90deg,#6900ad,#f9d13d);transition:width .3s;}
     @media (max-width: 700px) {
       .container { padding: 6px; }
       .stats { flex-direction: column; gap: 12px; }
@@ -123,6 +135,8 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <!-- jsPDF PDF library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div id="dark-toggle" title="الوضع الليلي/النهاري">🌙</div>
@@ -195,6 +209,17 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // توليد معرف للجهاز (Device UUID)
+    function getDeviceId() {
+      let id = localStorage.getItem("deviceId");
+      if (!id) {
+        id = "device-" + ([...Array(32)].map(()=>Math.random().toString(16)[2]).join(""));
+        localStorage.setItem("deviceId", id);
+      }
+      return id;
+    }
+    const deviceId = getDeviceId();
+
     // تحميل النصوص والشعار من فايربيس
     function loadSiteSettings() {
       db.ref("settings").once("value", snap=>{
@@ -263,6 +288,7 @@
       myProvince = this.value;
       renderJobs(document.getElementById("search").value);
     }
+
     // الوضع الليلي
     let dark = localStorage.getItem("darkMode")==="1";
     function setDarkMode(on) {
@@ -279,19 +305,40 @@
       setTimeout(()=>{toast.style.display="none";}, duration);
     }
 
-    // تسجيل دخول المستخدم
+    // تسجيل دخول المستخدم مع ربط الجهاز
     window.onload = function() {
-      if(!localStorage.getItem("ruyaJobsUser")){
+      // تحقق هل يوجد طلب قيد الدفع أو قيد التحقق لهذا الجهاز
+      checkUserStatus();
+    };
+
+    function checkUserStatus() {
+      let user = localStorage.getItem("ruyaJobsUser");
+      if (!user) {
         document.getElementById("login-modal-bg").style.display="flex";
       } else {
-        myUser = JSON.parse(localStorage.getItem("ruyaJobsUser"));
+        myUser = JSON.parse(user);
         myProvince = myUser.province;
         myPhone = myUser.phone;
         document.getElementById("province-input").value = myProvince;
         document.getElementById("filter-province").value = myProvince;
-        loadJobs();
+        // تحقق من الطلبات المرتبطة بالجهاز
+        db.ref("applications").orderByChild("deviceId").equalTo(deviceId).once("value", snap=>{
+          if (snap.exists()) {
+            let apps = Object.values(snap.val());
+            let activeApp = apps.find(a => a.status === "approved" && a.paymentStatus !== "done");
+            if (activeApp) {
+              window.showToast("لديك طلب قيد الدفع، يرجى إتمام الدفع قبل تقديم طلب جديد.");
+              renderJobs();
+            } else {
+              loadJobs();
+            }
+          } else {
+            loadJobs();
+          }
+        });
       }
-    };
+    }
+
     document.getElementById("login-btn").onclick = function() {
       const name = document.getElementById("name-input").value.trim();
       const phone = document.getElementById("phone-input").value.trim();
@@ -301,7 +348,7 @@
       else if(!/^07[789]\d{7}$/.test(phone)) error = "يرجى إدخال رقم هاتف أردني صحيح";
       else if(!province) error = "يرجى اختيار المحافظة";
       if(error) { document.getElementById("login-error").textContent = error; return; }
-      myUser = { name, phone, province, uid: phone };
+      myUser = { name, phone, province, uid: phone, deviceId };
       myProvince = province;
       myPhone = phone;
       localStorage.setItem("ruyaJobsUser", JSON.stringify(myUser));
@@ -311,33 +358,80 @@
       loadJobs();
     };
 
-    // تقديم الطلب
+    // تقديم الطلب (خطوات رسمية)
     window.openApplyModal = function(jobKey) {
+      // تحقق هل يوجد طلب غير مكتمل/قيد الدفع
+      db.ref("applications").orderByChild("deviceId").equalTo(deviceId).once("value", snap=>{
+        let apps = snap.exists()?Object.values(snap.val()):[];
+        let activeApp = apps.find(a => a.status === "approved" && a.paymentStatus !== "done");
+        if (activeApp) {
+          window.showToast("لديك طلب قيد الدفع، يرجى إتمام الدفع أو إلغاء الطلب أولاً.");
+          return;
+        }
+        // تابع خطوات التقديم
+        startApplySteps(jobKey);
+      });
+    }
+
+    function startApplySteps(jobKey) {
       const modal = document.getElementById("apply-modal");
       let step = 0, appId = null, job = null, appStatus = "pending", adminMsg = "";
+      let progress = [20, 40, 60, 80, 100];
       db.ref("jobs/"+jobKey).once("value", snap=>{
         job = snap.val();
         renderStep();
       });
-      function nextStep() {
-        step++;
-        renderStep();
-      }
+      function nextStep() { step++; renderStep(); }
+      function prevStep() { if(step>0) {step--; renderStep();} }
       function renderStep() {
+        modal.innerHTML = `<div class="progress-bar"><div class="progress-bar-inner" style="width:${progress[step]||100}%"></div></div>`;
         if(step===0){
-          modal.innerHTML = `
+          modal.innerHTML += `
             <div class="modal-title">تقديم طلب التوظيف</div>
             <div style="font-size:1.12rem;margin-bottom:9px;"><b>${(job.img||"💼")} ${job.title}</b></div>
             <div>الشركة: <b>${job.company||"--"}</b></div>
             <div>ساعات العمل: <b>${job.hours||"--"}</b></div>
             <div style="margin:7px 0 14px 0;">هل أنت متأكد من رغبتك بالتقديم لهذه الوظيفة؟</div>
-            <button class="apply-btn modal-btn" style="margin-top:11px;" onclick="nextStep()">متابعة الإجراءات</button>
+            <button class="apply-btn modal-btn" onclick="nextStep()">موافقة ومتابعة الإجراءات</button>
             <button class="apply-btn light" style="margin-top:8px;background:#f7f2ff;color:#6900ad;border:1px solid #6900ad;" onclick="closeApplyModal()">إلغاء</button>
           `;
         } else if(step===1){
-          let user = myUser;
+          modal.innerHTML += `
+            <div class="modal-title">مراجعة بياناتك</div>
+            <div>الاسم: <b>${myUser.name}</b></div>
+            <div>رقم الهاتف: <b>${myUser.phone}</b></div>
+            <div>المحافظة: <b>${myUser.province}</b></div>
+            <div style="margin:8px 0;">يرجى التأكد من صحة بياناتك قبل المتابعة.</div>
+            <button class="apply-btn modal-btn" onclick="nextStep()">بياناتي صحيحة</button>
+            <button class="apply-btn light" style="margin-top:8px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="prevStep()">عودة</button>
+          `;
+        } else if(step===2){
+          modal.innerHTML += `
+            <div class="modal-title">الموافقة على الشروط</div>
+            <div style="text-align:right;font-size:1rem;margin-bottom:15px;">
+              <ul>
+                <li>تتعهد بالحضور للوظيفة في الموعد المحدد.</li>
+                <li>رسوم الحجز تسترد في حال الإبلاغ بعدم الحضور قبل الموعد.</li>
+                <li>العقد الإلكتروني رسمي ويثبت التوظيف.</li>
+              </ul>
+            </div>
+            <button class="apply-btn modal-btn" onclick="nextStep()">موافقة على الشروط</button>
+            <button class="apply-btn light" style="margin-top:8px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="prevStep()">عودة</button>
+          `;
+        } else if(step===3){
+          modal.innerHTML += `
+            <div class="modal-title">توقيع إلكتروني</div>
+            <div style="font-size:1.09rem;margin-bottom:7px;">يرجى كتابة اسمك للتوقيع على العقد:</div>
+            <input type="text" id="sign-input" value="${myUser.name}" style="margin-bottom:11px;">
+            <button class="apply-btn modal-btn" onclick="nextStep()">توقيع ومتابعة</button>
+            <button class="apply-btn light" style="margin-top:8px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="prevStep()">عودة</button>
+          `;
+        } else if(step===4){
+          let signName = document.getElementById('sign-input')?document.getElementById('sign-input').value:myUser.name;
+          // حفظ الطلب في قاعدة البيانات
           appId = db.ref("applications").push({
-            ...user,
+            ...myUser,
+            deviceId,
             jobId: job.id,
             jobKey,
             jobTitle: job.title,
@@ -346,32 +440,121 @@
             salary: job.salary,
             hours: job.hours,
             type: job.type,
-            status: "pending",
+            signature: signName,
+            status: "approved", // مباشرة الموافقة لأغراض العرض
             adminMsg: "",
+            paymentStatus: "pending",
             timestamp: new Date().toISOString()
           }).key;
-          modal.innerHTML = `
-            <div class="modal-title">طلبك قيد المراجعة</div>
-            <div class="pending">تم استلام طلبك بنجاح، سيتم مراجعته من قبل فريق التوظيف.</div>
-            <div style="margin-top:13px;">يمكنك متابعة حالة طلبك من زر <b>"متابعة طلباتي"</b>.</div>
-            <button class="apply-btn modal-btn" style="margin-top:18px;" onclick="closeApplyModal()">إغلاق</button>
+          modal.innerHTML += `
+            <div class="modal-title">تم توظيفك مبدئياً</div>
+            <div class="success">مبروك! تم قبول طلبك وسيتم تثبيتك بعد دفع رسوم الحجز.</div>
+            <div style="margin:9px 0 4px 0;">يمكنك تحميل عقد العمل الآن:</div>
+            <button class="download-contract-btn" onclick="generateContractPDF({
+              name:'${myUser.name}',phone:'${myUser.phone}',province:'${myUser.province}',
+              jobTitle:'${job.title}',company:'${job.company}',salary:'${job.salary}',
+              hours:'${job.hours}',type:'${job.type}',signature:'${signName}',timestamp:'${new Date().toISOString()}'
+            })">تحميل عقد العمل PDF</button>
+            <div class="pay-info">
+              <div style="font-weight:700;color:#6900ad;">لإتمام حجز الوظيفة يجب دفع رسوم الحجز:</div>
+              <span class="amount">32.5 دينار</span><br>
+              <span>تشمل: رسوم إصدار شهادة عدم محكومية فورية، ضريبة، رسوم طوابع</span><br>
+              <div style="color:#127c01;font-weight:600;margin:7px 0 3px 0;">طريقة الدفع:</div>
+              <div>مدير التوظيف كليك <b>(الاسم المستعار: royajobs)</b></div>
+              <div class="bank">البنك الأهلي الأردني</div>
+              <div style="font-size:.97rem;margin-top:6px;color:#ad6c00;">المبلغ يُسترد في حال أبلغت بعدم الحضور قبل موعد الوظيفة.</div>
+              <button class="apply-btn" onclick="confirmPayment('${appId}')">لقد دفعت</button>
+              <button class="apply-btn light" style="margin-top:8px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="cancelRequest('${appId}')">إلغاء الطلب</button>
+            </div>
+            <button class="apply-btn light" style="margin-top:14px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="closeApplyModal()">إغلاق</button>
           `;
         }
       }
       window.nextStep = nextStep;
+      window.prevStep = prevStep;
+      window.cancelRequest = cancelRequest;
       renderStep();
       document.getElementById("apply-modal-bg").style.display="flex";
     }
+
     window.closeApplyModal = function() {
       document.getElementById("apply-modal-bg").style.display="none";
     }
 
-    // متابعة طلباتي (للمستخدم)
+    // تحميل عقد العمل PDF
+    function generateContractPDF(app) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({orientation: "portrait", unit: "mm", format: "a4"});
+      doc.setFont("Tajawal", "bold");
+      doc.setFontSize(24);
+      doc.setTextColor(105, 0, 173);
+      doc.text("عقد عمل رسمي", 105, 22, { align: "center" });
+
+      doc.setDrawColor(105,0,173);
+      doc.setLineWidth(1.2);
+      doc.rect(18, 35, 175, 155, "S");
+
+      doc.setFontSize(15);
+      doc.setTextColor(40,40,40);
+      doc.text(`اسم الموظف: ${app.name}`, 28, 50);
+      doc.text(`رقم الهاتف: ${app.phone}`, 28, 62);
+      doc.text(`المحافظة: ${app.province}`, 28, 74);
+      doc.text(`الوظيفة: ${app.jobTitle}`, 28, 86);
+      doc.text(`الشركة: ${app.company}`, 28, 98);
+      doc.text(`الراتب: ${app.salary} دينار أردني`, 28, 110);
+      doc.text(`عدد ساعات العمل: ${app.hours||"--"} ساعة`, 28, 122);
+      doc.text(`نوع العمل: ${app.type}`, 28, 134);
+
+      doc.setFontSize(13);
+      doc.setTextColor(60,60,60);
+      doc.text("هذا العقد يثبت توظيف المذكور أعلاه في الشركة المذكورة بالشروط الموضحة أعلاه.", 28, 146);
+
+      doc.setFontSize(15);
+      doc.setTextColor(0,105,40);
+      doc.text("توقيع الموظف:", 28, 160);
+      doc.setFontSize(18);
+      doc.setTextColor(40,40,40);
+      doc.text(`${app.signature||app.name}`, 60, 160);
+
+      doc.setFontSize(13);
+      doc.setTextColor(90,90,90);
+      doc.text("تاريخ الإصدار: " + (new Date(app.timestamp).toLocaleDateString("ar-EG")), 28, 178);
+
+      doc.setFontSize(18);
+      doc.setTextColor(105, 0, 173);
+      doc.text("قناة رؤيا", 150, 160);
+      doc.setFontSize(14);
+      doc.setTextColor(0,0,0);
+      doc.text("توقيع وختم الإدارة", 150, 170);
+
+      doc.setFontSize(11);
+      doc.setTextColor(180,0,50);
+      doc.text("عقد إلكتروني رسمي — جميع الحقوق محفوظة © رؤيا 2025", 105, 200, {align:"center"});
+
+      doc.save(`عقد_عمل_${app.name}.pdf`);
+    }
+
+    // زر دفع
+    window.confirmPayment = function(appId){
+      db.ref("applications/"+appId).update({paymentStatus:"checking"});
+      window.showToast("تم تسجيل دفعك، جاري التحقق من الإدارة.");
+      closeApplyModal();
+      // عند العودة يظهر له "الدفع قيد التحقق"
+    }
+    // إلغاء الطلب
+    window.cancelRequest = function(appId){
+      db.ref("applications/"+appId).remove();
+      window.showToast("تم إلغاء الطلب بنجاح، يمكنك التقديم لوظيفة أخرى.");
+      closeApplyModal();
+      loadJobs();
+    }
+
+    // متابعة طلباتي (زر تحميل العقد يظهر فقط عند الموافقة)
     window.showRequests = function(){
       let user = myUser;
       const modal = document.getElementById("req-modal");
-      db.ref("applications").orderByChild("phone").equalTo(user.phone).once("value",snap=>{
-        const apps = snap.exists()?Object.values(snap.val()):[];
+      db.ref("applications").orderByChild("deviceId").equalTo(deviceId).once("value",snap=>{
+        const apps = snap.exists()?Object.entries(snap.val()).map(([key,a])=>({...a, key})):[];
         let html = `<div class="modal-title">طلباتي</div>`;
         if(apps.length==0) html+=`<div>لا يوجد طلبات بعد.</div>`;
         else apps.reverse().forEach(a=>{
@@ -389,6 +572,16 @@
                 <div>مدير التوظيف كليك <b>(الاسم المستعار: royajobs)</b></div>
                 <div class="bank">البنك الأهلي الأردني</div>
                 <div style="font-size:.97rem;margin-top:6px;color:#ad6c00;">المبلغ يُسترد في حال أبلغت بعدم الحضور قبل موعد الوظيفة.</div>
+                ${a.paymentStatus=="pending"?`
+                  <button class="apply-btn" onclick="confirmPayment('${a.key}')">لقد دفعت</button>
+                  <button class="apply-btn light" style="margin-top:8px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="cancelRequest('${a.key}')">إلغاء الطلب</button>
+                `:""}
+                ${a.paymentStatus=="checking"?`
+                  <span class="pending">الدفع قيد التحقق من الإدارة</span>
+                  <button class="apply-btn light" style="margin-top:8px;background:#eee;color:#6900ad;border:1px solid #6900ad;" onclick="cancelRequest('${a.key}')">إلغاء الطلب</button>
+                `:""}
+                ${a.paymentStatus=="done"?`<span class="success">تم تثبيت الوظيفة بنجاح!</span>`:""}
+                <button class="download-contract-btn" style="margin-top:12px;" onclick='generateContractPDF(${JSON.stringify(a)})'>تحميل عقد العمل PDF</button>
               </div>
             `:""}
             ${a.status=="rejected" && a.adminMsg?`<div class="rejected">سبب الرفض: ${a.adminMsg}</div>`:""}
@@ -404,7 +597,6 @@
     }
     document.getElementById("req-modal-bg").onclick = function(e){ if(e.target===this) closeReqModal();}
     document.getElementById("apply-modal-bg").onclick = function(e){ if(e.target===this) closeApplyModal();}
-    // الحماية من الخروج من الجلسة
   </script>
 </body>
 </html>
