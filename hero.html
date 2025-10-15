@@ -2,476 +2,487 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>لوحة تحكم المشرف - منصة الوظائف الأردنية</title>
+  <title>لوحة تحكم وظائف رؤيا</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://www2.0zz0.com/2025/10/15/20/337819623.png">
+  <style>
+    :root {
+      --purple: #4b1979;
+      --purple-grad: linear-gradient(90deg, #7f38c0 0%, #4b1979 100%);
+      --purple-btn: linear-gradient(90deg, #a259c4 0%, #7f38c0 100%);
+      --white: #fff;
+      --shadow: 0 8px 32px #4b197914;
+      --gold: #b88f27;
+      --gray: #f9f7fa;
+      --danger: #e6415d;
+      --green: #43b968;
+    }
+    body {
+      margin: 0;
+      font-family: 'Cairo', Arial, sans-serif;
+      background: #f7f4fb;
+      color: var(--purple);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--purple);
+      color: var(--white);
+      text-align: center;
+      padding: 34px 10px 16px;
+      position: relative;
+    }
+    .header img {
+      width: 60px; height: 60px;
+      border-radius: 15px;
+      background: var(--white);
+      border: 3px solid #fff;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow);
+    }
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      margin: 8px 0;
+      letter-spacing: .5px;
+    }
+    .logout-btn {
+      position: absolute;
+      left: 18px; top: 18px;
+      background: #fff;
+      color: var(--purple);
+      font-weight: 700;
+      padding: 7px 22px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #7f38c034;
+      transition: background .2s;
+    }
+    .logout-btn:hover { background: #f2e7fa;}
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin: 0;
+      background: #fff;
+      border-radius: 0 0 24px 24px;
+      box-shadow: 0 1px 8px #4b197918;
+      position: relative;
+      top: -8px;
+      z-index: 3;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 19px 38px 10px 38px;
+      font-size: 1.11rem;
+      font-weight: 700;
+      color: #7f38c0;
+      cursor: pointer;
+      border-bottom: 4px solid transparent;
+      transition: color .2s, border .2s;
+      outline: none;
+    }
+    .tab-btn.active {
+      color: var(--purple);
+      border-bottom: 4px solid var(--purple);
+    }
+    .container {
+      max-width: 950px;
+      margin: 34px auto 30px auto;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 34px 18px 44px 18px;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .add-jobs-btn {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 9px 22px;
+      border-radius: 13px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      box-shadow: 0 2px 12px #43b96833;
+      cursor: pointer;
+      margin-bottom: 13px;
+      margin-top: 6px;
+      transition: background .2s;
+    }
+    .add-jobs-btn:active {background: #36994a;}
+    /* جدول الوظائف والمستخدمين */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 30px;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #eee;
+      padding: 10px 6px;
+      text-align: right;
+      font-size: 1.01rem;
+    }
+    th {
+      background: var(--purple);
+      color: #fff;
+      font-weight: bold;
+    }
+    tr:nth-child(even) { background: #f2e7fa;}
+    .actions button {
+      background: var(--purple-btn);
+      color: #fff;
+      border: none;
+      padding: 6px 18px;
+      border-radius: 7px;
+      font-size: .97rem;
+      cursor: pointer;
+      transition: background .2s;
+      margin-left: 8px;
+    }
+    .actions button.delete {
+      background: #e6415d;
+    }
+    .actions button:active {
+      opacity: .8;
+    }
+    .add-job-form input, .add-job-form textarea, .add-job-form select {
+      width: 100%;
+      padding: 10px 11px;
+      margin-bottom: 14px;
+      background: #fff;
+      border: 1.5px solid #d0b8e4;
+      border-radius: 9px;
+      font-size: 1.08rem;
+      font-family: inherit;
+      outline: none;
+      transition: border .2s;
+      box-sizing: border-box;
+    }
+    .add-job-form input:focus, .add-job-form textarea:focus, .add-job-form select:focus {
+      border-color: #7f38c0;
+    }
+    .add-job-form button {
+      background: var(--purple-btn);
+      color: #fff;
+      border: none;
+      padding: 11px 0;
+      width: 100%;
+      border-radius: 14px;
+      font-size: 1.08rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 7px;
+      box-shadow: 0 3px 16px #7f38c034;
+      transition: background .2s;
+    }
+    .add-job-form button:active { background: var(--purple);}
+    /* Responsive */
+    @media (max-width:900px) {.container {padding:13px;}}
+    @media (max-width:600px) {
+      .header h1 { font-size: 1.18rem;}
+      .container { padding: 8px;}
+      .tab-btn { padding: 14px 12px 8px 12px; font-size:.98rem;}
+      th,td { font-size: .93rem;}
+    }
+    .notify {
+      position: fixed;
+      top: 20px;
+      right: 50%;
+      transform: translateX(50%);
+      background: var(--purple-btn);
+      color: #fff;
+      padding: 16px 32px;
+      border-radius: 18px;
+      font-size: 1.13rem;
+      font-weight: 700;
+      box-shadow: 0 2px 16px #7f38c044;
+      z-index: 99999;
+      display: none;
+      animation: fadeIn .5s;
+    }
+    @keyframes fadeIn {
+      from { opacity:0; top:10px;}
+      to { opacity:1; top:20px;}
+    }
+    ::-webkit-scrollbar { width: 9px;}
+    ::-webkit-scrollbar-thumb { background: #7f38c034; border-radius: 6px;}
+    ::selection { background: #7f38c022; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" alt="شعار رؤيا">
+    <h1>لوحة تحكم وظائف رؤيا</h1>
+    <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('jobsTab')">الوظائف</button>
+    <button class="tab-btn" onclick="showTab('usersTab')">المستخدمون</button>
+  </div>
+  <div class="container">
+    <!-- الوظائف -->
+    <div id="jobsTab" class="tab-content active">
+      <button class="add-jobs-btn" onclick="addSampleJobs()">إضافة 150 وظيفة جاهزة</button>
+      <form class="add-job-form" id="jobForm">
+        <input required type="text" id="jobTitle" placeholder="المسمى الوظيفي">
+        <input required type="text" id="jobCompany" placeholder="اسم الشركة">
+        <input required type="number" id="jobSalary" placeholder="الراتب (دينار)" min="300" max="4000">
+        <input required type="number" id="jobHours" placeholder="عدد ساعات العمل" min="5" max="12">
+        <select required id="jobLocation">
+          <option value="">المحافظة</option>
+          <option>عمان</option><option>إربد</option><option>الزرقاء</option>
+          <option>العقبة</option><option>جرش</option><option>المفرق</option>
+          <option>عجلون</option><option>البلقاء</option><option>معان</option>
+          <option>الكرك</option><option>مادبا</option><option>الطفيلة</option>
+        </select>
+        <textarea required id="jobDesc" rows="3" placeholder="وصف الوظيفة"></textarea>
+        <button type="submit">إضافة وظيفة</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>المسمى</th>
+            <th>الشركة</th>
+            <th>الراتب</th>
+            <th>الساعات</th>
+            <th>المحافظة</th>
+            <th>الوصف</th>
+            <th>التاريخ</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="jobsTableBody"><tr><td colspan="8" style="text-align:center;">جارٍ التحميل...</td></tr></tbody>
+      </table>
+    </div>
+    <!-- المستخدمون -->
+    <div id="usersTab" class="tab-content">
+      <table>
+        <thead>
+          <tr>
+            <th>الاسم</th>
+            <th>الهاتف</th>
+            <th>المحافظة</th>
+            <th>تاريخ التسجيل</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody"><tr><td colspan="4" style="text-align:center;">جارٍ التحميل...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="notify" id="notify"></div>
   <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-    import { getDatabase, ref, set, push, update, remove, onValue, get } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCtvxXiWWZ4GxWxz1rAhu9nRwiFlkiKMtA",
       authDomain: "royanew-a02f3.firebaseapp.com",
       projectId: "royanew-a02f3",
-      storageBucket: "royanew-a02f3.firebasestorage.app",
+      storageBucket: "royanew-a02f3.appspot.com",
       messagingSenderId: "640968299159",
       appId: "1:640968299159:web:590e4256ad1492ca19cfd2",
       measurementId: "G-69TLG6LYYK",
       databaseURL: "https://royanew-a02f3-default-rtdb.firebaseio.com"
     };
-    window.app = initializeApp(firebaseConfig);
-    window.db = getDatabase(app);
-    window.ref = ref;
-    window.push = push;
-    window.set = set;
-    window.update = update;
-    window.remove = remove;
-    window.onValue = onValue;
-    window.get = get;
-  </script>
-  <style>
-    body {
-      font-family: "Cairo", Arial, sans-serif;
-      background: linear-gradient(135deg, #f4f6f8 60%, #e4f1fb 100%);
-      margin: 0;
-      color: #222;
-    }
-    .logo {
-      display:block;
-      margin: 30px auto 10px auto;
-      width: 130px;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px #aaa;
-      background: #fff;
-      padding: 10px;
-    }
-    .main-box {
-      max-width: 480px;
-      margin: 25px auto;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 2px 12px #b0d4ed;
-      padding: 28px 24px 18px 24px;
-      text-align: right;
-    }
-    h1 {
-      text-align: center;
-      color: #2196f3;
-      margin-top: 0;
-    }
-    .hidden { display: none; }
-    .tab-btn {
-      background: #2196f3;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin: 3px 7px 0 0;
-      transition: background 0.2s;
-      box-shadow: 0 1px 6px #b0d4ed;
-      display:inline-block;
-    }
-    .tab-btn.active { background: #1769aa; }
-    .tab-content { margin-top: 18px; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #f7fbff;
-      border-radius: 10px;
-      box-shadow: 0 1px 4px #b0d4ed;
-      overflow: hidden;
-    }
-    th, td {
-      padding: 7px 5px;
-      border-bottom: 1px solid #dfe8f3;
-      text-align: right;
-      font-size: 0.97rem;
-    }
-    th { background: #e4f1fb; color: #1976d2; }
-    tr:last-child td { border-bottom: none; }
-    .edit-btn, .del-btn, .add-btn, .save-btn, .cancel-btn {
-      border: none; border-radius: 6px; cursor: pointer; padding: 5px 11px;
-      margin: 1px 2px; font-size: 0.95rem;
-    }
-    .edit-btn { background: #ffb300; color: #fff; }
-    .del-btn { background: #d32f2f; color: #fff; }
-    .save-btn { background: #43a047; color: #fff;}
-    .cancel-btn { background: #888; color: #fff;}
-    .add-btn { background: #2196f3; color: #fff; margin-bottom:6px;}
-    .job-form input, .job-form select { width:96%; padding:4px; margin-bottom:5px; border-radius:5px; border:1px solid #b0d4ed; font-size:1rem;}
-    .job-form { background:#f7fbff; border-radius:8px; padding:12px; margin-bottom:10px;}
-    .supervisor-box { background: #f7fbff; padding: 8px 12px; border-radius: 12px; box-shadow: 0 1px 6px #b0d4ed; margin-bottom: 14px;}
-    .contract-img { max-width: 320px; border-radius: 8px; box-shadow: 0 1px 6px #b0d4ed;}
-    .small-note { color: #888; font-size: 0.91rem;}
-    @media (max-width: 600px){ .main-box{padding: 13px 2vw;} }
-  </style>
-</head>
-<body>
-  <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" class="logo" alt="شعار الموقع" />
-  <div class="main-box" id="mainBox">
-    <h1>لوحة تحكم المشرف</h1>
-    <!-- تسجيل الدخول -->
-    <form id="loginForm">
-      <label>اسم المستخدم</label>
-      <input type="text" id="loginUser" required maxlength="30" autocomplete="username"/>
-      <label>كلمة المرور</label>
-      <input type="password" id="loginPass" required maxlength="30" autocomplete="current-password"/>
-      <button type="submit">دخول</button>
-      <div class="small-note" style="margin-top:9px;">اسم المستخدم: <b>Hero</b> | كلمة المرور: <b>Hero@282</b></div>
-    </form>
-    <!-- لوحة التحكم -->
-    <div id="adminPanel" class="hidden">
-      <div id="tabs">
-        <button class="tab-btn active" onclick="showTab('usersTab')">المسجلين</button>
-        <button class="tab-btn" onclick="showTab('jobsTab')">الوظائف</button>
-        <button class="tab-btn" onclick="showTab('contractsTab')">العقود</button>
-        <button class="tab-btn hidden" id="supervisorsTabBtn" onclick="showTab('supervisorsTab')">المشرفين</button>
-      </div>
-      <div class="tab-content" id="usersTab"></div>
-      <div class="tab-content hidden" id="jobsTab"></div>
-      <div class="tab-content hidden" id="contractsTab"></div>
-      <div class="tab-content hidden" id="supervisorsTab"></div>
-    </div>
-  </div>
-  <script>
-    let isSuperHero = false;
-    let supervisors = {Hero: {name: "Hero", password: "Hero@282"}};
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    // البداية: جلب المشرفين من قاعدة البيانات أو إنشاءهم
-    async function loadSupervisors(){
-      let snap = await window.get(window.ref(window.db, 'supervisors/'));
-      if(snap.exists()) supervisors = snap.val();
-      else await window.set(window.ref(window.db, 'supervisors/'), supervisors);
-    }
-    loadSupervisors();
-
-    // تسجيل الدخول
-    document.getElementById("loginForm").addEventListener("submit", async function(e){
-      e.preventDefault();
-      let user = document.getElementById("loginUser").value.trim();
-      let pass = document.getElementById("loginPass").value;
-      await loadSupervisors();
-      if(supervisors[user] && supervisors[user].password === pass){
-        document.getElementById("loginForm").style.display = "none";
-        document.getElementById("adminPanel").classList.remove("hidden");
-        if(user === "Hero") {
-          isSuperHero = true;
-          document.getElementById("supervisorsTabBtn").classList.remove("hidden");
-        }
-        showTab('usersTab');
-        loadUsers();
-        loadJobs();
-        loadContracts();
-        if(isSuperHero) loadSupervisorsTab();
-      }else{
-        alert("بيانات الدخول غير صحيحة");
-      }
-    });
-
-    // إدارة علامات التبويب
-    function showTab(tab){
-      ["usersTab","jobsTab","contractsTab","supervisorsTab"].forEach(t=>{
-        document.getElementById(t).classList.add("hidden");
-        let btn=document.querySelector('.tab-btn[onclick*="'+t+'"]');
-        if(btn) btn.classList.remove("active");
-      });
-      document.getElementById(tab).classList.remove("hidden");
-      let btn=document.querySelector('.tab-btn[onclick*="'+tab+'"]');
-      if(btn) btn.classList.add("active");
+    // إشعار جميل
+    function notify(msg, time=2700) {
+      let n = document.getElementById('notify');
+      n.innerText = msg;
+      n.style.display = 'block';
+      setTimeout(()=>{ n.style.display = 'none'; }, time);
     }
 
-    // --- المسجلين ---
-    function loadUsers(){
-      window.onValue(window.ref(window.db, 'users/'), snap=>{
-        let users = snap.exists() ? snap.val() : {};
-        let html = `<table><thead>
-          <tr><th>الاسم</th><th>الهاتف</th><th>المحافظة</th><th>تاريخ التسجيل</th></tr></thead><tbody>`;
-        Object.values(users).reverse().forEach(u=>{
-          html += `<tr>
-            <td>${u.name}</td>
-            <td>${u.phone}</td>
-            <td>${u.gov}</td>
-            <td>${u.regTime ? new Date(u.regTime).toLocaleDateString('ar-JO') : ''}</td>
-          </tr>`;
-        });
-        html += "</tbody></table>";
-        document.getElementById("usersTab").innerHTML = html;
-      });
+    // Tabs
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`.tab-btn[onclick="showTab('${tabId}')"]`).classList.add('active');
+      if(tabId==='jobsTab') loadJobs();
+      if(tabId==='usersTab') loadUsers();
     }
 
     // --- الوظائف ---
-    let jobGovs = ["عمان","إربد","الزرقاء","البلقاء","المفرق","جرش","عجلون","مأدبا","الكرك","الطفيلة","معان","العقبة"];
-    function loadJobs(){
-      window.onValue(window.ref(window.db, 'jobs/'), snap=>{
-        let jobs = snap.exists() ? snap.val() : {};
-        let html = `<button class="add-btn" onclick="showAddJobForm()">إضافة وظيفة جديدة</button>
-        <div id="jobFormBox"></div>
-        <table><thead>
-          <tr><th>الوظيفة</th><th>الساعات</th><th>الراتب</th><th>المحافظة</th><th>إجراءات</th></tr></thead><tbody>`;
-        Object.entries(jobs).reverse().forEach(([key,job])=>{
-          html += `<tr>
-            <td>${job.title}</td>
-            <td>${job.hours}</td>
-            <td>${job.salary}</td>
-            <td>${job.gov}</td>
-            <td>
-              <button class="edit-btn" onclick="editJob('${key}')">تعديل</button>
-              <button class="del-btn" onclick="delJob('${key}')">حذف</button>
-            </td>
-          </tr>`;
+    function loadJobs() {
+      const tbody = document.getElementById('jobsTableBody');
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">جارٍ التحميل...</td></tr>`;
+      db.ref('jobs').orderByChild('timestamp').once('value', (snap) => {
+        let rows = [];
+        snap.forEach(child => {
+          let job = child.val();
+          rows.unshift(`
+            <tr>
+              <td>${job.title}</td>
+              <td>${job.company||''}</td>
+              <td>${job.salary||''}</td>
+              <td>${job.hours||''}</td>
+              <td>${job.location||''}</td>
+              <td style="max-width:180px;white-space:pre-line;">${job.description?job.description.replace(/\n/g,"<br>"):""}</td>
+              <td>${new Date(job.timestamp).toLocaleDateString('ar-JO')}</td>
+              <td class="actions">
+                <button onclick="editJob('${child.key}')">تعديل</button>
+                <button class="delete" onclick="deleteJob('${child.key}')">حذف</button>
+              </td>
+            </tr>
+          `);
         });
-        html += "</tbody></table>";
-        document.getElementById("jobsTab").innerHTML = html;
+        tbody.innerHTML = rows.length ? rows.join('') : `<tr><td colspan="8" style="text-align:center;">لا توجد وظائف</td></tr>`;
       });
     }
     // إضافة وظيفة
-    window.showAddJobForm = function(){
-      let box = document.getElementById("jobFormBox");
-      box.innerHTML = `<form class="job-form" onsubmit="addJob(event)">
-        <label>اسم الوظيفة</label>
-        <input type="text" id="jobTitle" required maxlength="50"/>
-        <label>عدد الساعات</label>
-        <input type="number" id="jobHours" required min="7" max="10"/>
-        <label>الراتب</label>
-        <input type="number" id="jobSalary" required min="550" max="1200"/>
-        <label>المحافظة</label>
-        <select id="jobGov" required>${jobGovs.map(g=>`<option value="${g}">${g}</option>`).join("")}</select>
-        <button type="submit" class="save-btn">حفظ</button>
-        <button type="button" class="cancel-btn" onclick="cancelJobForm()">إلغاء</button>
-      </form>`;
-    }
-    window.cancelJobForm = function(){ document.getElementById("jobFormBox").innerHTML = ""; }
-    window.addJob = async function(e){
+    const jobForm = document.getElementById('jobForm');
+    let editingId = null;
+    jobForm.onsubmit = function(e){
       e.preventDefault();
-      let title = document.getElementById("jobTitle").value.trim();
-      let hours = +document.getElementById("jobHours").value;
-      let salary = +document.getElementById("jobSalary").value;
-      let gov = document.getElementById("jobGov").value;
-      await window.push(window.ref(window.db, 'jobs/'), {title, hours, salary, gov});
-      cancelJobForm();
-    }
-    // تعديل وظيفة
-    window.editJob = function(key){
-      window.get(window.ref(window.db, `jobs/${key}`)).then(snap=>{
-        if(snap.exists()){
-          let job = snap.val();
-          document.getElementById("jobFormBox").innerHTML = `<form class="job-form" onsubmit="saveEditJob(event,'${key}')">
-            <label>اسم الوظيفة</label>
-            <input type="text" id="jobTitle" required maxlength="50" value="${job.title}"/>
-            <label>عدد الساعات</label>
-            <input type="number" id="jobHours" required min="7" max="10" value="${job.hours}"/>
-            <label>الراتب</label>
-            <input type="number" id="jobSalary" required min="550" max="1200" value="${job.salary}"/>
-            <label>المحافظة</label>
-            <select id="jobGov" required>${jobGovs.map(g=>`<option value="${g}"${g===job.gov?' selected':''}>${g}</option>`).join("")}</select>
-            <button type="submit" class="save-btn">حفظ</button>
-            <button type="button" class="cancel-btn" onclick="cancelJobForm()">إلغاء</button>
-          </form>`;
-        }
-      });
-    }
-    window.saveEditJob = async function(e,key){
-      e.preventDefault();
-      let title = document.getElementById("jobTitle").value.trim();
-      let hours = +document.getElementById("jobHours").value;
-      let salary = +document.getElementById("jobSalary").value;
-      let gov = document.getElementById("jobGov").value;
-      await window.update(window.ref(window.db, `jobs/${key}`), {title, hours, salary, gov});
-      cancelJobForm();
+      const title = jobTitle.value.trim();
+      const company = jobCompany.value.trim();
+      const salary = +jobSalary.value;
+      const hours = +jobHours.value;
+      const location = jobLocation.value;
+      const description = jobDesc.value.trim();
+      if (!title || !company || !salary || !hours || !location || !description) {
+        notify('يرجى تعبئة جميع الحقول');
+        return;
+      }
+      const data = {
+        title, company, salary, hours, location, description, timestamp: Date.now()
+      };
+      if(editingId){
+        db.ref('jobs/'+editingId).set(data).then(()=>{
+          notify('تم تعديل الوظيفة');
+          jobForm.reset();
+          editingId = null;
+          jobForm.querySelector('button').innerText = "إضافة وظيفة";
+          loadJobs();
+        });
+      }else{
+        db.ref('jobs').push(data).then(()=>{
+          notify('تمت إضافة الوظيفة');
+          jobForm.reset();
+          loadJobs();
+        });
+      }
     }
     // حذف وظيفة
-    window.delJob = async function(key){
-      if(confirm("هل أنت متأكد من حذف الوظيفة؟"))
-        await window.remove(window.ref(window.db, `jobs/${key}`));
-    }
-
-    // --- العقود ---
-    function loadContracts(){
-      window.onValue(window.ref(window.db, 'contracts/'), snap=>{
-        let contracts = snap.exists() ? snap.val() : {};
-        let html = `<table><thead>
-          <tr><th>الموظف</th><th>الهاتف</th><th>الوظيفة</th><th>الساعات</th><th>الراتب</th><th>المحافظة</th><th>تاريخ العقد</th><th>العقد</th></tr></thead><tbody>`;
-        Object.values(contracts).reverse().forEach(c=>{
-          html += `<tr>
-            <td>${c.userName}</td>
-            <td>${c.userPhone}</td>
-            <td>${c.jobTitle}</td>
-            <td>${c.jobHours}</td>
-            <td>${c.jobSalary}</td>
-            <td>${c.jobGov}</td>
-            <td>${c.contractTime ? new Date(c.contractTime).toLocaleDateString('ar-JO'): ''}</td>
-            <td><button class="edit-btn" onclick="showContractImage('${encodeURIComponent(JSON.stringify(c))}')">عرض العقد</button></td>
-          </tr>`;
+    function deleteJob(key) {
+      if(confirm('هل أنت متأكد من حذف الوظيفة؟')) {
+        db.ref('jobs/'+key).remove().then(()=>{
+          notify('تم حذف الوظيفة');
+          loadJobs();
         });
-        html += "</tbody></table><div id='contractImageModal' style='display:none;'></div>";
-        document.getElementById("contractsTab").innerHTML = html;
-      });
-    }
-    // عرض صورة العقد
-    window.showContractImage = function(dataStr){
-      let c = JSON.parse(decodeURIComponent(dataStr));
-      let modal = document.getElementById("contractImageModal");
-      const contractHtml = `
-        <div style="font-family: 'Cairo'; direction:rtl; background:#fff; border-radius:18px; padding:22px 18px; box-shadow:0 1px 6px #b0d4ed; max-width:430px; margin:auto; border:1px solid #b0d4ed;">
-          <div style="text-align:center;">
-            <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" style="width:80px; border-radius:10px; margin-bottom:10px" alt="شعار الموقع" />
-            <h2 style="margin:0;color:#2196f3;font-size:1.5rem">عقد توظيف رسمي</h2>
-            <div style="color:#888; font-size:0.99rem;margin-bottom:8px">رقم العقد: <b>${Math.floor(Math.random()*90000+10000)}</b></div>
-          </div>
-          <div style="margin:12px 0 5px 0; font-size:1.06rem">
-            <b>الطرف الأول (الموقع):</b> منصة الوظائف الأردنية<br>
-            <b>الطرف الثاني (الموظف):</b> ${c.userName} <br>
-            <b>رقم الهاتف:</b> ${c.userPhone}<br>
-            <b>المحافظة:</b> ${c.userGov}
-          </div>
-          <div style="margin:9px 0 5px 0; font-size:1.08rem">
-            يقر الطرفان بإبرام هذا العقد على وظيفة: <b>${c.jobTitle}</b> في محافظة <b>${c.jobGov}</b>، بمدة عمل <b>${c.jobHours}</b> ساعات يومياً، براتب شهري <b>${c.jobSalary}</b> دينار أردني.
-          </div>
-          <div style="margin:8px 0 7px 0; color:#333; font-size:0.97rem">
-            تم توقيع العقد إلكترونيًا بتاريخ: <b>${new Date(c.contractTime).toLocaleDateString('ar-JO')}</b>
-          </div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px">
-            <div style="text-align:center">
-              <div style="font-size:0.95rem;color:#555;font-weight:bold">توقيع الموقع</div>
-              <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" style="width:55px;opacity:0.7" alt="ختم الموقع" />
-            </div>
-            <div style="text-align:center">
-              <div style="font-size:0.95rem;color:#555;font-weight:bold">توقيع الموظف</div>
-              <div style="border-bottom:2px solid #2196f3; width:80px; height:22px; margin:auto; font-style:italic; font-family:'Cairo'; color:#1976d2; font-size:0.98rem">${c.userName}</div>
-            </div>
-          </div>
-          <div style="text-align:center; margin-top:15px; color:#bbb; font-size:0.9rem">
-            جميع الحقوق محفوظة &copy; منصة الوظائف الأردنية 2025
-          </div>
-        </div>
-      `;
-      modal.style.display = 'block';
-      modal.innerHTML = `<div id="contractDesign">${contractHtml}</div>
-        <button class="del-btn" onclick="document.getElementById('contractImageModal').style.display='none'">إغلاق</button>
-        <button class="save-btn" onclick="downloadContractImage()">تحميل صورة العقد</button>
-        <img id="contractImageHere" class="contract-img" style="display:none; margin-top:10px;"/>
-        <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-      `;
-      setTimeout(()=>{
-        html2canvas(document.getElementById("contractDesign")).then(canvas=>{
-          document.getElementById("contractImageHere").src = canvas.toDataURL("image/png");
-          document.getElementById("contractImageHere").style.display = "block";
-        });
-      }, 350);
-    }
-    // تحميل صورة العقد
-    window.downloadContractImage = function(){
-      let img = document.getElementById("contractImageHere");
-      let link = document.createElement('a');
-      link.href = img.src;
-      link.download = "employment_contract.png";
-      link.click();
-    }
-
-    // --- إدارة المشرفين (مخفي إلا لـ Hero) ---
-    function loadSupervisorsTab(){
-      let html = `<button class="add-btn" onclick="showAddSupervisorForm()">إضافة مشرف جديد</button>
-        <div id="supervisorFormBox"></div>
-        <div class="supervisor-box"><b>المشرفون الحاليون:</b></div>
-        <table><thead>
-          <tr><th>المعرف</th><th>الاسم</th><th>كلمة المرور</th><th>إجراءات</th></tr></thead><tbody>`;
-      Object.entries(supervisors).forEach(([key,sup])=>{
-        html += `<tr>
-          <td>${key}</td>
-          <td>${sup.name}</td>
-          <td>${sup.password}</td>
-          <td>
-            ${key==="Hero"?"":`
-            <button class="edit-btn" onclick="editSupervisor('${key}')">تعديل</button>
-            <button class="del-btn" onclick="delSupervisor('${key}')">حذف</button>
-            `}
-          </td>
-        </tr>`;
-      });
-      html += "</tbody></table>";
-      document.getElementById("supervisorsTab").innerHTML = html;
-    }
-    window.showAddSupervisorForm = function(){
-      let box = document.getElementById("supervisorFormBox");
-      box.innerHTML = `<form class="job-form" onsubmit="addSupervisor(event)">
-        <label>المعرف</label>
-        <input type="text" id="supKey" required maxlength="20"/>
-        <label>الاسم</label>
-        <input type="text" id="supName" required maxlength="30"/>
-        <label>كلمة المرور</label>
-        <input type="text" id="supPass" required maxlength="30"/>
-        <button type="submit" class="save-btn">حفظ</button>
-        <button type="button" class="cancel-btn" onclick="cancelSupervisorForm()">إلغاء</button>
-      </form>`;
-    }
-    window.cancelSupervisorForm = function(){ document.getElementById("supervisorFormBox").innerHTML = ""; }
-    window.addSupervisor = async function(e){
-      e.preventDefault();
-      let key = document.getElementById("supKey").value.trim();
-      let name = document.getElementById("supName").value.trim();
-      let password = document.getElementById("supPass").value.trim();
-      supervisors[key] = {name,password};
-      await window.set(window.ref(window.db, 'supervisors/'), supervisors);
-      cancelSupervisorForm(); loadSupervisorsTab();
-    }
-    window.editSupervisor = function(key){
-      let sup = supervisors[key];
-      document.getElementById("supervisorFormBox").innerHTML = `<form class="job-form" onsubmit="saveEditSupervisor(event,'${key}')">
-        <label>الاسم</label>
-        <input type="text" id="supName" required maxlength="30" value="${sup.name}"/>
-        <label>كلمة المرور</label>
-        <input type="text" id="supPass" required maxlength="30" value="${sup.password}"/>
-        <button type="submit" class="save-btn">حفظ</button>
-        <button type="button" class="cancel-btn" onclick="cancelSupervisorForm()">إلغاء</button>
-      </form>`;
-    }
-    window.saveEditSupervisor = async function(e,key){
-      e.preventDefault();
-      supervisors[key].name = document.getElementById("supName").value.trim();
-      supervisors[key].password = document.getElementById("supPass").value.trim();
-      await window.set(window.ref(window.db, 'supervisors/'), supervisors);
-      cancelSupervisorForm(); loadSupervisorsTab();
-    }
-    window.delSupervisor = async function(key){
-      if(confirm("هل أنت متأكد من حذف المشرف؟")){
-        delete supervisors[key];
-        await window.set(window.ref(window.db, 'supervisors/'), supervisors);
-        loadSupervisorsTab();
       }
     }
-
-    // --- الوظائف الجاهزة (100 وظيفة عشوائية) ---
-    async function createRandomJobsIfNotExists(){
-      let snap = await window.get(window.ref(window.db, 'jobs/'));
-      if(snap.exists() && Object.keys(snap.val()).length >= 100) return;
-      let titles = [
-        "موظف استقبال", "محاسب مالي", "سائق سيارة", "فني كهرباء", "عامل مستودع", "مطور ويب", "موظف تسويق", "باحث اجتماعي", "ممرض", "معلم لغة عربية",
-        "منسق فعاليات", "موظف خدمة عملاء", "حارس أمن", "طباخ", "نجار", "مندوب مبيعات", "محلل نظم", "مدير مشاريع", "عامل نظافة", "مهندس مدني",
-        "مهندس معماري", "رسام هندسي", "مشرف إنتاج", "فني تكييف", "فني صيانة أجهزة", "مصمم جرافيك", "مساعد إداري", "كاتب محتوى", "موظف موارد بشرية", "فني مختبر",
-        "مدخل بيانات", "مراقب جودة", "أخصائي تغذية", "مدير مالي", "بائع في متجر", "مدرب رياضي", "معلم رياضيات", "مدير تسويق", "مساعد طباخ", "سائق باص",
-        "موظف شؤون قانونية", "مصور فوتوغرافي", "مترجم", "فني اتصالات", "معلم لغة إنجليزية", "مساعد طبيب", "سكرتير", "فني كمبيوتر", "فني شبكات", "عامل بناء",
-        "مساعد ممرض", "وكيل تأمين", "منسق مبيعات", "منظم رحلات", "مسؤول مشتريات", "منسق إعلامي", "مدير مدرسة", "موظف علاقات عامة", "محاسب ضرائب", "موظف بريد",
-        "سائق شاحنة", "محاسب رواتب", "عامل مطبعة", "أمين مكتبة", "فني ميكانيك", "مراقب مخزون", "عامل تعبئة وتغليف", "فني زراعة", "مشرف صحة وسلامة", "منسق تدريب",
-        "مدير موارد بشرية", "فني صوتيات", "مدرب لغات", "منظم فعاليات", "مشرف أمن وسلامة", "أخصائي نفسي", "فني بصريات", "مدير علاقات عامة", "عامل توصيل", "مدير إنتاج",
-        "موظف استقبال مرضى", "مشرف عمال", "عامل نظافة مكتب", "مساعد مدير", "مبرمج تطبيقات", "مشرف صيانة", "كاتب تقارير", "أخصائي تسويق إلكتروني", "فني مختبر طبي", "سكرتير تنفيذي",
-        "موظف تسجيل بيانات", "منسق شحن", "منسق خدمات", "موظف دعم فني", "مسؤول أمن معلومات", "أخصائي خدمة عملاء", "مدير مبيعات", "كاتب حسابات", "عامل تغليف", "فني إنتاج"
+    // تعديل وظيفة
+    function editJob(key) {
+      db.ref('jobs/'+key).once('value', snap=>{
+        const job = snap.val();
+        jobTitle.value = job.title||"";
+        jobCompany.value = job.company||"";
+        jobSalary.value = job.salary||"";
+        jobHours.value = job.hours||"";
+        jobLocation.value = job.location||"";
+        jobDesc.value = job.description||"";
+        editingId = key;
+        jobForm.querySelector('button').innerText = "تحديث الوظيفة";
+        jobTitle.focus();
+      });
+    }
+    // --- إضافة 150 وظيفة جاهزة ---
+    function addSampleJobs() {
+      if(!confirm("سيتم إضافة 150 وظيفة متنوعة. تابع؟")) return;
+      const titles = [
+        "محاسب", "مهندس برمجيات", "مندوب مبيعات", "سكرتيرة", "سائق", "طبيب عام",
+        "معلم/ة", "ممرض/ة", "فني كهرباء", "مطور مواقع", "مدير مشاريع", "محلل بيانات",
+        "مندوب توصيل", "موظف استقبال", "موظف موارد بشرية", "مدير تسويق", "خبير شبكات",
+        "مدخل بيانات", "أخصائي دعم فني", "محامي", "مندوب علاقات عامة", "مساعد إداري",
+        "موظف خدمات", "كاشير", "شيف مطبخ", "عامل نظافة", "مراقب جودة", "أخصائي تسويق رقمي",
+        "مهندس مدني", "مهندس معماري", "مصمم جرافيك", "فني ميكانيك", "فني صيانة", "مراقب مخزون",
+        "أخصائي تغذية", "مدرب رياضي", "مدير مالي", "مدير مشتريات", "موظف بنك", "حارس أمن",
+        "خدمة عملاء", "مصور", "كاتب محتوى", "مطور تطبيقات", "مهندس شبكات", "أخصائي موارد بشرية",
+        "أخصائي وسائل تواصل", "أخصائي مختبر", "مندوب تسويق", "مساعد طبيب", "مدير مكتب",
+        "محاسب تكاليف", "مدير إنتاج", "محاسب رواتب", "محاسب عملاء", "مندوب مشتريات", "فني تكييف",
+        "مساعد محاسب", "أخصائي ضبط جودة", "أخصائي مبيعات", "مدير علاقات عامة", "فني إلكترونيات",
+        "أخصائي أمن معلومات", "مهندس كهرباء", "مدير خدمة عملاء", "أخصائي تسويق ميداني", "مهندس إنتاج",
+        "مساعد إداري تنفيذي", "مسؤول مشتريات", "أخصائي تحليل نظم", "مدير وحدة تدريب", "محلل استثمار",
+        "محاسب أول", "مدير مبيعات", "مساعد مدير", "قانوني", "معاون إداري", "محاسب ضرائب", "أخصائي موارد مالية",
+        "مسؤول علاقات حكومية", "مدير قسم", "فني مختبرات طبية", "أخصائي تطوير أعمال", "أخصائي موارد بشرية أول",
+        "مساعد تسويق", "موظف استقبال زوار", "موظف استقبال هاتف", "مراقب دوام", "أخصائي أمن صناعي",
+        "فني صوتيات", "مشرف خدمات", "أمين مستودع", "فني بصريات", "فني أشعة", "فني أسنان", "مراقب أمن",
+        "محلل مالي", "فني طباعة", "أخصائي علاقات عامة", "مدير علاقات عامة أول", "فني شبكات حاسوب",
+        "أخصائي إدارة مشاريع", "مدير إنتاج صناعي", "محاسب تكاليف صناعية", "أخصائي دعم فني أول", "مساعد مدير مشروع",
+        "مدير صيانة", "أخصائي تقارير", "مدير خدمة ما بعد البيع", "محلل عمليات", "مدير تسويق رقمي",
+        "مساعد مدير تسويق", "فني إلكترونيات صناعية", "محلل بيانات أول", "منسق شحن", "مدير لوجستيات",
+        "مهندس جودة", "محاسب مستودعات", "أخصائي تسويق إلكتروني", "مدير شؤون موظفين", "موظف استقبال مرضى",
+        "أخصائي تخطيط موارد", "مساعد محاسب أول", "مساعد مدير مكتب", "مساعد إداري أول", "مساعد مدير مكتب تنفيذي",
+        "أخصائي نظم معلومات", "مدير مختبر", "مدير موارد بشرية", "مدير إدارة المخاطر", "مساعد مدير مالي",
+        "أمين مكتبة", "فني أجهزة طبية", "محاسب ضرائب أول", "أخصائي تطوير برمجيات", "أخصائي اتصالات",
+        "محاسب بنوك", "مساعد مدير علاقات عامة", "مساعد مدير تسويق رقمي", "محلل أعمال", "أخصائي تكنولوجيا معلومات",
+        "مشرف مبيعات", "مساعد مدير لوجستيات", "أخصائي تدريب", "محاسب أول عملاء", "أخصائي ذكاء أعمال"
       ];
+      const companies = ["رؤيا", "زين", "أمنية", "شركة كبرى", "مستشفى الحياة", "مدارس الأمل", "مطاعم النخبة", "مؤسسة السلام", "شركة القيصر", "شركة الخليج"];
+      const descs = [
+        "فرصة عمل مميزة، بيئة عمل محفزة، وامتيازات رائعة.",
+        "دوام مرن وأجواء عمل عائلية.",
+        "رواتب مجزية وحوافز شهرية.",
+        "تأمين صحي وبدل مواصلات.",
+        "الوظيفة متاحة للجنسين مع فرص تطوير.",
+        "العمل ضمن فريق شاب وطموح.",
+        "امتيازات عديدة وتدريب مدفوع الأجر.",
+        "الراتب حسب الكفاءة مع زيادات سنوية.",
+        "الوظيفة مناسبة للخريجين الجدد وذوي الخبرة."
+      ];
+      const govs = ["عمان","إربد","الزرقاء","العقبة","جرش","المفرق","عجلون","البلقاء","معان","الكرك","مادبا","الطفيلة"];
       let jobs = [];
-      for(let i=0;i<100;i++){
-        let gov = jobGovs[Math.floor(Math.random()*jobGovs.length)];
-        let title = titles[i%titles.length];
-        let hours = Math.floor(Math.random()*4)+7; // من 7-10
-        let salary = Math.floor(Math.random()*651)+550; // من 550-1200
-        jobs.push({title, hours, salary, gov});
+      for(let i=0;i<150;i++){
+        jobs.push({
+          title: titles[i%titles.length],
+          company: companies[Math.floor(Math.random()*companies.length)],
+          salary: Math.floor(Math.random()*951)+550,
+          hours: [7,8,9,10][Math.floor(Math.random()*4)],
+          location: govs[Math.floor(Math.random()*govs.length)],
+          description: descs[Math.floor(Math.random()*descs.length)],
+          timestamp: Date.now() + i*10
+        });
       }
-      // أضف الوظائف دفعة واحدة
-      for(let job of jobs){
-        await window.push(window.ref(window.db, 'jobs/'), job);
-      }
+      let count = 0;
+      jobs.forEach(job=>{
+        db.ref('jobs').push(job, ()=>{count++; if(count===jobs.length){notify("تمت إضافة 150 وظيفة!"); loadJobs();}});
+      });
     }
-    createRandomJobsIfNotExists();
-
+    // --- المستخدمون ---
+    function loadUsers() {
+      const tbody = document.getElementById('usersTableBody');
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">جارٍ التحميل...</td></tr>`;
+      db.ref('users').orderByChild('timestamp').once('value', (snap) => {
+        let rows = [];
+        snap.forEach(child => {
+          let user = child.val();
+          rows.unshift(`
+            <tr>
+              <td>${user.username || ''}</td>
+              <td>${user.phone || ''}</td>
+              <td>${user.governorate || ''}</td>
+              <td>${user.timestamp ? new Date(user.timestamp).toLocaleDateString('ar-JO') : ''}</td>
+            </tr>
+          `);
+        });
+        tbody.innerHTML = rows.length ? rows.join('') : `<tr><td colspan="4" style="text-align:center;">لا يوجد مستخدمون</td></tr>`;
+      });
+    }
+    // تسجيل خروج (إعادة تحميل الصفحة)
+    function logout() {
+      if(confirm('هل تريد تسجيل الخروج من لوحة التحكم؟')) location.reload();
+    }
+    // تحميل الوظائف والمستخدمين عند فتح الصفحة
+    loadJobs();
   </script>
 </body>
 </html>

