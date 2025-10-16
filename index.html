@@ -688,10 +688,10 @@
 
     // خطوات رسمية واقعية
     const steps = [
-      {txt:'تم استلام طلب التوظيف بنجاح ويجري الآن تدقيق البيانات رسمياً.', time:1600, class:'done'},
-      {txt:'تمت مراجعة طلبك من قبل لجنة التوظيف، وجاري مطابقة البيانات مع متطلبات الوظيفة.', time:2000, class:'waiting'},
-      {txt:'تم قبولك مبدئيًا في الوظيفة، وسيتم إعداد عقد عمل رسمي باسمك.', time:1600, class:'done'},
-      {txt:'يتم الآن تجهيز اتفاقية العمل الرسمية والإجراءات الإدارية النهائية.', time:1800, class:'waiting'}
+      {txt:'تم استلام طلب التوظيف بنجاح ويجري الآن تدقيق البيانات رسمياً.', time:3000, class:'done'},
+      {txt:'تمت مراجعة طلبك من قبل لجنة التوظيف، وجاري مطابقة البيانات مع متطلبات الوظيفة.', time:3000, class:'waiting'},
+      {txt:'تم قبولك مبدئيًا في الوظيفة، وسيتم إعداد عقد عمل رسمي باسمك.', time:3000, class:'done'},
+      {txt:'يتم الآن تجهيز اتفاقية العمل الرسمية والإجراءات الإدارية النهائية.', time:3000, class:'waiting'}
     ];
 
     function handleRequestFlow(req) {
@@ -769,7 +769,6 @@
         <div class="contract-agree">
           <b>بموجب هذه الاتفاقية، أقر بأن جميع البيانات أعلاه صحيحة، وألتزم بالحضور والقيام بمهامي الوظيفية حسب المتفق عليه مع الجهة المانحة للوظيفة.</b>
         </div>
-        <button class="contract-img-btn" onclick="downloadContractImg()">تحميل نسخة صورة من العقد</button>
         <button class="contract-img-btn" onclick="nextToPayment()" style="background:#39bb6c;margin-top:8px;">استمرار للعمل</button>
         <button class="cancel-btn" onclick="cancelRequest()">إلغاء الطلب</button>
         <div class="contract-footer">العقد صادر إلكترونياً عن بوابة رؤيا للوظائف</div>
